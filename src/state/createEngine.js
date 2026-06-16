@@ -12,6 +12,32 @@ import { saveSession } from '../lib/session.js';
 const TOTAL_STEPS = 8;
 let MSG_SEQ = 0;
 
+const SECTION_REQUIRED = {
+  1: ['f_p_name', 'f_p_nric', 'f_p_edu', 'f_p_occ', 'f_p_sal', 'f_d_name', 'f_d_nric', 'f_d_edu', 'f_d_occ', 'f_d_sal'],
+  2: ['f_m_cert', 'f_m_date', 'f_m_venue', 'f_m_prior'],
+  3: ['f_ground'],
+  4: ['f_custody'],
+  5: ['f_hdb_addr', 'f_hdb_value', 'f_relief'],
+  6: ['f_child_naf', 'f_self_naf'],
+  7: ['f_bk'],
+  8: ['f_declarant', 'f_declare_date'],
+};
+
+const FIELD_TO_SECTION = Object.fromEntries(
+  Object.entries(SECTION_REQUIRED).flatMap(([section, ids]) => ids.map((id) => [id, Number(section)])),
+);
+
+const SECTION_NEXT_ACT = {
+  1: 'checkCitizenship',
+  2: 'showGrounds',
+  3: 'showChildren',
+  4: 'showHDB',
+  5: 'showMaintenance',
+  6: 'showBankruptcy',
+  7: 'showPreview',
+  8: 'doSubmit',
+};
+
 export function createEngine() {
   const engine = {
     lang: 'en',
@@ -24,7 +50,8 @@ export function createEngine() {
     form: {
       fields: {}, filled: {}, flash: {}, secDone: {},
       talakRows: [], childrenRows: [], showRevocRow: false, showBkRow: false,
-      progressPct: 0,
+      progressPct: 0, activeSection: 1, unlockedSection: 1,
+      validationIssues: {}, justUnlockedSection: null,
     },
 
     // flow vars (ported)
@@ -93,6 +120,114 @@ export function createEngine() {
     notify();
     persist();
   }
+  function setActiveSection(n) {
+    engine.form.activeSection = n;
+    engine.form.unlockedSection = Math.max(engine.form.unlockedSection || 1, n);
+    notify();
+    setTimeout(() => {
+      const sec = document.getElementById(sectionDomId(n));
+      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+  }
+  function unlockSection(n) {
+    engine.form.unlockedSection = Math.max(engine.form.unlockedSection || 1, n);
+    engine.form.activeSection = n;
+    engine.form.justUnlockedSection = n;
+    notify();
+    setTimeout(() => {
+      engine.form.justUnlockedSection = null;
+      notify();
+    }, 900);
+    setTimeout(() => {
+      const sec = document.getElementById(sectionDomId(n));
+      if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 120);
+  }
+  function fieldSection(id) {
+    if (FIELD_TO_SECTION[id]) return FIELD_TO_SECTION[id];
+    if (id.startsWith('f_p_') || id.startsWith('f_d_')) return 1;
+    if (id.startsWith('f_m_')) return 2;
+    if (id.startsWith('f_hdb_') || id === 'f_duration' || id === 'f_relief') return 5;
+    if (id.startsWith('f_child_') || id.startsWith('f_self_')) return 6;
+    if (id.startsWith('f_bk')) return 7;
+    if (id.startsWith('f_declare') || id === 'f_declarant') return 8;
+    return engine.form.activeSection || 1;
+  }
+  function normalizeFieldValue(id, value) {
+    const v = String(value ?? '').trim();
+    if (!v) return '';
+    if (id.endsWith('_sal') || id.includes('_naf')) {
+      const num = parseMoney(v);
+      return Number.isFinite(num) ? `SGD ${num}/mth` : v;
+    }
+    return v;
+  }
+
+  engine.setField = function (id, value) {
+    const val = normalizeFieldValue(id, value);
+    if (id === 'f_m_prior') engine.form.showRevocRow = /^yes/i.test(val);
+    if (id === 'f_bk') engine.form.showBkRow = /^yes/i.test(val);
+    if (val) fill(id, val, sectionDomId(fieldSection(id)));
+    else {
+      delete engine.form.fields[id];
+      delete engine.form.filled[id];
+      notify();
+    }
+    engine.form.validationIssues[fieldSection(id)] = [];
+    persist();
+  };
+  engine.isSectionComplete = function (n) {
+    if (n === 7) {
+      const status = String(engine.form.fields.f_bk || '').toLowerCase();
+      if (!status) return false;
+      return !status.includes('yes') || Boolean(String(engine.form.fields.f_bk_details || '').trim());
+    }
+    if (n === 2) {
+      const baseDone = (SECTION_REQUIRED[n] || []).every((id) => String(engine.form.fields[id] || '').trim());
+      const prior = String(engine.form.fields.f_m_prior || '').toLowerCase();
+      return baseDone && (!prior.includes('yes') || Boolean(String(engine.form.fields.f_m_revoc || '').trim()));
+    }
+    if (n === 8) return true;
+    return (SECTION_REQUIRED[n] || []).every((id) => String(engine.form.fields[id] || '').trim());
+  };
+  engine.validateSection = function (n) {
+    const issues = [];
+    if (!engine.isSectionComplete(n)) issues.push('Some required fields are still missing.');
+    if (n === 1) {
+      salaryIssue('Plaintiff', engine.form.fields.f_p_occ, engine.form.fields.f_p_sal, issues);
+      salaryIssue('Defendant', engine.form.fields.f_d_occ, engine.form.fields.f_d_sal, issues);
+    }
+    if (n === 6) {
+      const child = parseMoney(engine.form.fields.f_child_naf);
+      const self = parseMoney(engine.form.fields.f_self_naf);
+      if (child > 20000 || self > 20000) issues.push('One maintenance amount looks unusually high. Please confirm it is a monthly amount.');
+    }
+    return issues;
+  };
+  engine.forceContinueSection = function (n) { engine.continueSection(Number(n), true); };
+  engine.continueSection = function (n, force = false) {
+    n = Number(n || engine.form.activeSection || 1);
+    setActiveSection(n);
+    const issues = engine.validateSection(n);
+    engine.form.validationIssues[n] = issues;
+    notify();
+    if (issues.length && !force) {
+      addAI(() => addMsg(`<p>${t('verify_review')}</p>
+        <div class="warn-banner">${issues.map(escapeHtml).join('<br>')}</div>
+        <div class="choice-btns" style="margin-top:8px">
+          <button class="btn btn-secondary live" data-act="forceContinueSection" data-arg="${n}">${t('continue_anyway')}</button>
+        </div>`));
+      return;
+    }
+    engine.form.validationIssues[n] = [];
+    markSectionDone(n);
+    const next = n + 1;
+    if (next <= TOTAL_STEPS) unlockSection(next);
+    addAI(() => addMsg(`<p>${n < TOTAL_STEPS ? t('section_saved_next').replace('{n}', String(next)) : t('section_saved_review')}</p>`));
+    const act = SECTION_NEXT_ACT[n];
+    if (act && engine[act]) setTimeout(() => engine[act](), 950);
+    persist();
+  };
 
   // ── persistence ──
   function snapshotForSave() {
@@ -104,7 +239,8 @@ export function createEngine() {
         fields: engine.form.fields, filled: engine.form.filled, secDone: engine.form.secDone,
         talakRows: engine.form.talakRows, childrenRows: engine.form.childrenRows,
         showRevocRow: engine.form.showRevocRow, showBkRow: engine.form.showBkRow,
-        progressPct: engine.form.progressPct,
+        progressPct: engine.form.progressPct, activeSection: engine.form.activeSection,
+        unlockedSection: engine.form.unlockedSection, validationIssues: engine.form.validationIssues,
       },
       vars: {
         talakData: engine.talakData, numTalakSessions: engine.numTalakSessions,
@@ -233,34 +369,23 @@ export function createEngine() {
   };
   engine.showPersonalAdditional = function () {
     const a = engine.addlData;
+    setActiveSection(1);
+    fill('f_p_edu', engine.form.fields.f_p_edu || a.p.edu, 'sec_parties');
+    fill('f_p_occ', engine.form.fields.f_p_occ || a.p.occ);
+    fill('f_p_sal', engine.form.fields.f_p_sal || `SGD ${a.p.sal}/mth`);
+    fill('f_d_edu', engine.form.fields.f_d_edu || a.d.edu);
+    fill('f_d_occ', engine.form.fields.f_d_occ || a.d.occ);
+    fill('f_d_sal', engine.form.fields.f_d_sal || `SGD ${a.d.sal}/mth`);
     addAI(() => addMsg(`<p>${t('addl_details')}</p>
-      <div class="fbox">
-        <div class="fbox-t">${t('plaintiff')}</div>
-        <div class="fgrid">
-          <div class="fg"><label class="flbl">${t('education')}</label>
-            <select class="fsel" id="p_edu">${t('education_opts').map((o) => `<option ${o === a.p.edu ? 'selected' : ''}>${o}</option>`).join('')}</select></div>
-          <div class="fg"><label class="flbl">${t('occupation')}</label><input class="fin" id="p_occ" value="${a.p.occ}"></div>
-        </div>
-        <div class="fgrid full"><div class="fg"><label class="flbl">${t('salary')}</label><div class="sgdi"><div class="sgdp">SGD</div><input type="number" class="fin" id="p_sal" value="${a.p.sal}" style="border:none"></div></div></div>
-        <div class="fbox-t" style="margin-top:10px">${t('defendant')}</div>
-        <div class="fgrid">
-          <div class="fg"><label class="flbl">${t('education')}</label>
-            <select class="fsel" id="d_edu">${t('education_opts').map((o) => `<option ${o === a.d.edu ? 'selected' : ''}>${o}</option>`).join('')}</select></div>
-          <div class="fg"><label class="flbl">${t('occupation')}</label><input class="fin" id="d_occ" value="${a.d.occ}"></div>
-        </div>
-        <div class="fgrid full"><div class="fg"><label class="flbl">${t('salary')}</label><div class="sgdi"><div class="sgdp">SGD</div><input type="number" class="fin" id="d_sal" value="${a.d.sal}" style="border:none"></div></div></div>
-        ${btn('btn-secondary live', 'confirmAddl', 'confirm_addl')}
-      </div>`));
+      <p>${t('chat_type_to_fill')}</p>
+      <div class="note">${t('verify_before_next')}</div>`));
   };
   engine.confirmAddl = function () {
     const a = engine.addlData;
-    a.p.edu = document.getElementById('p_edu').value; a.p.occ = document.getElementById('p_occ').value; a.p.sal = document.getElementById('p_sal').value;
-    a.d.edu = document.getElementById('d_edu').value; a.d.occ = document.getElementById('d_occ').value; a.d.sal = document.getElementById('d_sal').value;
-    fill('f_p_edu', a.p.edu); fill('f_p_occ', a.p.occ); fill('f_p_sal', 'SGD ' + a.p.sal + '/mth');
-    fill('f_d_edu', a.d.edu); fill('f_d_occ', a.d.occ); fill('f_d_sal', 'SGD ' + a.d.sal + '/mth');
-    markSectionDone(1);
+    a.p.edu = engine.form.fields.f_p_edu || ''; a.p.occ = engine.form.fields.f_p_occ || ''; a.p.sal = engine.form.fields.f_p_sal || '';
+    a.d.edu = engine.form.fields.f_d_edu || ''; a.d.occ = engine.form.fields.f_d_occ || ''; a.d.sal = engine.form.fields.f_d_sal || '';
     disableLive(); addUser(t('confirm_addl'));
-    setTimeout(() => engine.checkCitizenship(), 280);
+    engine.continueSection(1);
   };
   engine.checkCitizenship = function () {
     addAI(() => addMsg(`<div class="bypass-card"><div class="bypass-icon">✓</div>
@@ -271,6 +396,7 @@ export function createEngine() {
   // ── Marriage: upload ROMM cert ──
   engine.showMarriage = function () {
     setStep(5);
+    setActiveSection(2);
     engine._resumeAt = 'showMarriage';
     addAI(() => addMsg(`<p>${t('marriage_details')}</p>`), () => uploadStep({
       specKey: 'marriage', promptKey: 'upload_marriage',
@@ -287,40 +413,32 @@ export function createEngine() {
     }));
   };
   engine.askPrior = function () {
+    setActiveSection(2);
     addAI(() => addMsg(`<div class="note">${t('prior_q')}</div>
-      <div class="choice-btns" style="margin-top:8px">
-        ${btn('btn-primary live', 'showGrounds', 'no', { userKey: 'no' })}
-        ${btn('live', 'showRevocation', 'yes_prior', { userKey: 'yes_prior' })}
-      </div>`));
+      <p>${t('chat_type_to_fill')}</p>`));
   };
   engine.showRevocation = function () {
     fill('f_m_prior', t('yes_prior'));
+    engine.form.showRevocRow = true;
+    setActiveSection(2);
     addAI(() => addMsg(`<p>${t('revocation')}</p>
-      <div class="fbox">
-        <div class="fgrid full"><div class="fg"><label class="flbl">${t('revoc_cert')}</label><input class="fin" id="revoc_cert"></div></div>
-        <div class="fgrid full"><div class="fg"><label class="flbl">${t('revoc_date')}</label><input type="date" class="fin" id="revoc_date"></div></div>
-        ${btn('btn-secondary live', 'confirmRevoc', 'confirm_revoc')}
-      </div>`));
+      <p>${t('chat_type_to_fill')}</p>
+      <div class="note">${t('verify_before_next')}</div>`));
   };
   engine.confirmRevoc = function () {
-    engine.revocData.certNo = document.getElementById('revoc_cert').value;
-    engine.revocData.regDate = document.getElementById('revoc_date').value;
+    engine.revocData.certNo = engine.form.fields.f_m_revoc || '';
+    engine.revocData.regDate = '';
     engine.form.showRevocRow = true;
-    fill('f_m_revoc', engine.revocData.certNo + ' (' + engine.revocData.regDate + ')');
     disableLive(); addUser(t('confirm_revoc'));
-    setTimeout(() => engine.showGrounds(), 280);
+    engine.continueSection(2);
   };
 
   // ── Grounds ──
   engine.showGrounds = function () {
     markSectionDone(2);
+    setActiveSection(3);
     addAI(() => addMsg(`<p>${t('grounds')}</p>
-      <div class="grid-4">
-        <div class="ground-card live-card" data-act="groundChoice" data-arg="talak"><div class="ground-arabic">١</div><div class="ground-en">${t('talak')}</div><div class="ground-bm">${t('talak_desc')}</div></div>
-        <div class="ground-card live-card" data-act="groundChoice" data-arg="fasakh"><div class="ground-arabic">ف</div><div class="ground-en">${t('fasakh')}</div><div class="ground-bm">${t('fasakh_desc')}</div></div>
-        <div class="ground-card live-card" data-act="groundChoice" data-arg="taklik"><div class="ground-arabic">ت</div><div class="ground-en">${t('taklik')}</div><div class="ground-bm">${t('taklik_desc')}</div></div>
-        <div class="ground-card live-card" data-act="groundChoice" data-arg="khuluk"><div class="ground-arabic">خ</div><div class="ground-en">${t('khuluk')}</div><div class="ground-bm">${t('khuluk_desc')}</div></div>
-      </div>
+      <p>${t('chat_type_to_fill')}</p>
       <div class="note" style="margin-top:8px">${t('grounds_note')}</div>`));
   };
   engine.groundChoice = function (type) {
@@ -422,6 +540,7 @@ export function createEngine() {
   engine.showChildren = function () {
     setStep(6);
     markSectionDone(3);
+    setActiveSection(4);
     engine._resumeAt = 'showChildren';
     addAI(() => addMsg(`<p>${t('children')}</p>`), () => uploadStep({
       specKey: 'birth', promptKey: 'upload_birth',
@@ -435,12 +554,9 @@ export function createEngine() {
     }));
   };
   engine.askCustody = function () {
+    setActiveSection(4);
     addAI(() => addMsg(`<div class="note">${t('parenting')}</div>
-      <div class="choice-btns" style="margin-top:8px">
-        ${btn('live', 'pickCustody', 'joint', { arg: 'joint' })}
-        ${btn('live', 'pickCustody', 'sole_me', { arg: 'sole_me' })}
-        ${btn('live', 'pickCustody', 'court_decide', { arg: 'court_decide' })}
-      </div>`));
+      <p>${t('chat_type_to_fill')}</p>`));
   };
   engine.pickCustody = function (key) {
     const val = t(key);
@@ -454,6 +570,7 @@ export function createEngine() {
   // ── Assets: upload HDB statement (and CPF) ──
   engine.showHDB = function () {
     setStep(7);
+    setActiveSection(5);
     engine._resumeAt = 'showHDB';
     addAI(() => addMsg(`<p>${t('hdb_details')}</p>`), () => uploadStep({
       specKey: 'hdb', promptKey: 'upload_hdb',
@@ -472,11 +589,7 @@ export function createEngine() {
     addAI(() => addMsg(`<div style="margin-top:4px;font-size:12px"><strong>${t('duration')}:</strong>
         <span class="duration-pill">16 years & 1 month <span class="duration-badge">${t('auto_calc')}</span></span></div>
       <p style="margin-top:10px">${t('relief')}</p>
-      <div class="choice-btns" style="margin-top:6px">
-        ${btn('live', 'pickRelief', 'sell_50', { arg: 'sell_50' })}
-        ${btn('live', 'pickRelief', 'transfer', { arg: 'transfer' })}
-        ${btn('live', 'pickRelief', 'retain', { arg: 'retain' })}
-      </div>`));
+      <p>${t('chat_type_to_fill')}</p>`));
   };
   engine.pickRelief = function (key) {
     const val = t(key);
@@ -489,31 +602,24 @@ export function createEngine() {
 
   engine.showMaintenance = function () {
     setStep(8);
+    setActiveSection(6);
+    fill('f_child_naf', engine.form.fields.f_child_naf || 'SGD 0/mth', 'sec_maint');
+    fill('f_self_naf', engine.form.fields.f_self_naf || 'SGD 0/mth');
     addAI(() => addMsg(`<p>${t('maintenance')}</p>
-      <div class="fbox">
-        <div class="fgrid">
-          <div class="fg"><label class="flbl">${t('child_nafkah')}</label><div class="sgdi"><div class="sgdp">SGD</div><input type="number" id="child_naf" value="0" min="0" style="border:none;padding:6px 8px"></div></div>
-          <div class="fg"><label class="flbl">${t('self_nafkah')}</label><div class="sgdi"><div class="sgdp">SGD</div><input type="number" id="self_naf" value="0" min="0" style="border:none;padding:6px 8px"></div></div>
-        </div>
-        ${btn('btn-secondary live', 'submitMaint', 'confirm_maint')}
-      </div>`));
+      <p>${t('chat_type_to_fill')}</p>
+      <div class="note">${t('verify_before_next')}</div>`));
   };
   engine.submitMaint = function () {
-    engine.childNaf = document.getElementById('child_naf').value || '0';
-    engine.selfNaf = document.getElementById('self_naf').value || '0';
-    fill('f_child_naf', 'SGD ' + engine.childNaf + '/mth', 'sec_maint');
-    fill('f_self_naf', 'SGD ' + engine.selfNaf);
-    markSectionDone(6);
+    engine.childNaf = String(engine.form.fields.f_child_naf || 'SGD 0/mth');
+    engine.selfNaf = String(engine.form.fields.f_self_naf || 'SGD 0/mth');
     disableLive(); addUser(t('confirm_maint'));
-    setTimeout(() => engine.showBankruptcy(), 280);
+    engine.continueSection(6);
   };
   engine.showBankruptcy = function () {
+    setActiveSection(7);
     addAI(() => addMsg(`<div style="font-weight:700;color:#660d07;margin-bottom:6px">${t('bk_title')}</div>
       <p>${t('bk_q')}</p>
-      <div class="choice-btns">
-        ${btn('live', 'handleBK', 'bk_no', { arg: '0' })}
-        ${btn('live', 'handleBK', 'bk_yes', { arg: '1' })}
-      </div>`));
+      <p>${t('chat_type_to_fill')}</p>`));
   };
   engine.handleBK = function (arg) {
     const hasIt = arg === '1';
@@ -530,15 +636,15 @@ export function createEngine() {
     }, 280);
   };
   engine.submitBKDetails = function () {
-    engine.bkDetails = document.getElementById('bk_details').value;
+    engine.bkDetails = engine.form.fields.f_bk_details || '';
     fill('f_bk_details', engine.bkDetails || '(no details)');
     engine.form.showBkRow = true;
-    markSectionDone(7);
     disableLive(); addUser(t('submit_bk'));
-    setTimeout(() => engine.showPreview(), 280);
+    engine.continueSection(7);
   };
 
   engine.showPreview = function () {
+    setActiveSection(8);
     const today = new Date().toLocaleDateString(engine.lang === 'en' ? 'en-SG' : 'ms-MY');
     fill('f_ref', 'SYC/OS/2026/04/18742');
     fill('f_date', today);
@@ -614,6 +720,20 @@ export function createEngine() {
   engine.pushAIText = (txt) => addMsg(`<p>${escapeHtml(txt).replace(/\n/g, '<br>')}</p>`);
   engine.addTyping = () => { const id = ++MSG_SEQ; engine.messages.push({ id, kind: 'typing' }); notify(); return id; };
   engine.removeMsg = (id) => { engine.messages = engine.messages.filter((m) => m.id !== id); notify(); };
+  engine.handleChatText = function (txt) {
+    const section = engine.form.activeSection || 1;
+    if (isContinueIntent(txt)) {
+      engine.continueSection(section, Boolean(engine.form.validationIssues?.[section]?.length));
+      return true;
+    }
+    const updates = extractSectionUpdates(section, txt);
+    if (!Object.keys(updates).length) return false;
+    for (const [id, val] of Object.entries(updates)) engine.setField(id, val);
+    const labels = Object.keys(updates).map((id) => fieldLabel(id)).join(', ');
+    addAI(() => addMsg(`<p>${t('extracted_fields').replace('{fields}', escapeHtml(labels))}</p>
+      <div class="note">${engine.isSectionComplete(section) ? t('ready_to_continue') : t('missing_more_details')}</div>`));
+    return true;
+  };
 
   // ── restore from a saved session ──
   engine.restore = function (saved) {
@@ -640,4 +760,184 @@ export function createEngine() {
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function sectionDomId(n) {
+  return {
+    1: 'sec_parties',
+    2: 'sec_marriage',
+    3: 'sec_grounds',
+    4: 'sec_children',
+    5: 'sec_property',
+    6: 'sec_maint',
+    7: 'sec_bk',
+    8: 'sec_declare',
+  }[n];
+}
+
+function parseMoney(value) {
+  const match = String(value || '').replace(/,/g, '').match(/(\d+(?:\.\d+)?)/);
+  return match ? Number(match[1]) : NaN;
+}
+
+function salaryIssue(who, occupation, salary, issues) {
+  const occ = String(occupation || '').toLowerCase();
+  const sal = parseMoney(salary);
+  if (!Number.isFinite(sal)) return;
+  const ordinaryRole = /(teacher|educator|admin|assistant|driver|clerk|cashier|nurse|technician|operator|executive)/.test(occ);
+  if (ordinaryRole && sal >= 15000) {
+    issues.push(`${who}'s salary (${salary}) looks high for "${occupation}". Please confirm whether it is monthly and keyed correctly.`);
+  } else if (sal >= 30000) {
+    issues.push(`${who}'s monthly salary (${salary}) looks unusually high. Please double-check the amount.`);
+  }
+}
+
+function isContinueIntent(text) {
+  return /\b(continue|next|proceed|save|section\s*\d+|go on|teruskan|sambung)\b/i.test(text);
+}
+
+function extractSectionUpdates(section, text) {
+  const src = String(text || '').replace(/\r/g, '\n');
+  if (section === 1) return extractParties(src);
+  if (section === 2) return extractMarriage(src);
+  if (section === 3) return extractGround(src);
+  if (section === 4) return extractChildren(src);
+  if (section === 5) return extractProperty(src);
+  if (section === 6) return extractMaintenance(src);
+  if (section === 7) return extractBankruptcy(src);
+  return {};
+}
+
+function extractParties(text) {
+  const updates = {};
+  const p = sliceBetween(text, /plaintiff|applicant|you/i, /defendant|respondent|spouse/i) || text;
+  const d = sliceFrom(text, /defendant|respondent|spouse/i);
+  Object.assign(updates, extractPartyBlock(p, 'p'));
+  if (d) Object.assign(updates, extractPartyBlock(d, 'd'));
+  return updates;
+}
+
+function extractPartyBlock(block, party) {
+  const out = {};
+  const prefix = party === 'p' ? 'f_p_' : 'f_d_';
+  const education = firstMatch(block, /education(?:\s+level)?\s*[:\n ]+(.+?)(?=\n|occupation|gross|salary|$)/i) || educationFromText(block);
+  const occupation = firstMatch(block, /occupation\s*[:\n ]+(.+?)(?=\n|gross|salary|education|$)/i);
+  const salary = firstMatch(block, /(?:gross\s+monthly\s+)?salary\s*[:\n ]+(?:sgd\s*)?([\d,]+(?:\.\d+)?)/i);
+  const name = firstMatch(block, /(?:full\s+)?name\s*[:\n ]+(.+?)(?=\n|nric|date|dob|$)/i);
+  const nric = firstMatch(block, /\b([STFGM]\d{7}[A-Z])\b/i);
+  const dob = firstMatch(block, /(?:dob|date\s+of\s+birth)\s*[:\n ]+(.+?)(?=\n|citizenship|religion|$)/i);
+  const citizenship = firstMatch(block, /citizenship\s*[:\n ]+(.+?)(?=\n|religion|education|$)/i);
+  if (name) out[prefix + 'name'] = cleanValue(name);
+  if (nric) out[prefix + 'nric'] = nric.toUpperCase();
+  if (dob) out[prefix + 'dob'] = cleanValue(dob);
+  if (citizenship) out[prefix + 'citizenship'] = cleanValue(citizenship);
+  if (/islam/i.test(block)) out[prefix + 'religion'] = 'Islam';
+  if (education) out[prefix + 'edu'] = cleanValue(education);
+  if (occupation) out[prefix + 'occ'] = cleanValue(occupation);
+  if (salary) out[prefix + 'sal'] = `SGD ${salary.replace(/,/g, '')}/mth`;
+  return out;
+}
+
+function extractMarriage(text) {
+  const out = {};
+  const pairs = [
+    ['f_m_cert', /(?:certificate|cert)\s*(?:no\.?|number)?\s*[:\n ]+(.+?)(?=\n|date|venue|wali|mahr|$)/i],
+    ['f_m_date', /(?:date\s+of\s+marriage|marriage\s+date)\s*[:\n ]+(.+?)(?=\n|venue|wali|mahr|$)/i],
+    ['f_m_venue', /venue\s*[:\n ]+(.+?)(?=\n|wali|mahr|prior|$)/i],
+    ['f_m_wali', /wali\s*[:\n ]+(.+?)(?=\n|mahr|prior|$)/i],
+    ['f_m_mahr', /mahr\s*[:\n ]+(.+?)(?=\n|prior|revocation|$)/i],
+    ['f_m_revoc', /revocation\s*(?:cert|certificate)?\s*[:\n ]+(.+?)(?=\n|$)/i],
+  ];
+  for (const [id, rx] of pairs) {
+    const v = firstMatch(text, rx);
+    if (v) out[id] = cleanValue(v);
+  }
+  if (/\b(no|none|never)\b.*prior/i.test(text) || /prior.*\b(no|none|never)\b/i.test(text)) out.f_m_prior = 'No';
+  if (/\b(yes)\b.*prior/i.test(text) || /prior.*\b(yes)\b/i.test(text)) out.f_m_prior = 'Yes';
+  return out;
+}
+
+function extractGround(text) {
+  const ground = firstMatch(text, /\b(talak|fasakh|taklik|khuluk)\b/i);
+  return ground ? { f_ground: titleCase(ground) } : {};
+}
+
+function extractChildren(text) {
+  const custody = firstMatch(text, /\b(joint custody|sole custody|court to determine|court decide)\b/i);
+  if (!custody) return {};
+  return { f_custody: custody.toLowerCase().includes('court') ? 'Court to determine' : titleCase(custody) };
+}
+
+function extractProperty(text) {
+  const out = {};
+  const address = firstMatch(text, /(?:hdb\s+)?address\s*[:\n ]+(.+?)(?=\n|lease|value|loan|relief|$)/i);
+  const lease = firstMatch(text, /lease\s*(?:year)?\s*[:\n ]+(\d{4})/i);
+  const value = firstMatch(text, /(?:estimated\s+)?value\s*[:\n ]+(?:sgd\s*)?([\d,]+)/i);
+  const loan = firstMatch(text, /(?:loan|outstanding)\s*[:\n ]+(?:sgd\s*)?([\d,]+)/i);
+  const duration = firstMatch(text, /duration\s*[:\n ]+(.+?)(?=\n|relief|$)/i);
+  const relief = firstMatch(text, /relief\s*[:\n ]+(.+?)(?=\n|$)/i) || firstMatch(text, /\b(sell.+|transfer.+|retain.+)$/im);
+  if (address) out.f_hdb_addr = cleanValue(address);
+  if (lease) out.f_hdb_lease = lease;
+  if (value) out.f_hdb_value = `SGD ${value.replace(/,/g, '')}`;
+  if (loan) out.f_hdb_loan = `SGD ${loan.replace(/,/g, '')}`;
+  if (duration) out.f_duration = cleanValue(duration);
+  if (relief) out.f_relief = cleanValue(relief);
+  return out;
+}
+
+function extractMaintenance(text) {
+  const out = {};
+  const child = firstMatch(text, /(?:child|nafkah).*?(?:sgd\s*)?([\d,]+(?:\.\d+)?)/i);
+  const self = firstMatch(text, /(?:self|iddah|alimony).*?(?:sgd\s*)?([\d,]+(?:\.\d+)?)/i);
+  if (child) out.f_child_naf = `SGD ${child.replace(/,/g, '')}/mth`;
+  if (self) out.f_self_naf = `SGD ${self.replace(/,/g, '')}/mth`;
+  return out;
+}
+
+function extractBankruptcy(text) {
+  const lower = text.toLowerCase();
+  if (/\b(no|none|nil|nothing)\b/.test(lower)) return { f_bk: 'None declared' };
+  if (/\b(yes|bankrupt|bankruptcy|case|proceeding|court)\b/.test(lower)) return { f_bk: 'Yes - proceedings exist', f_bk_details: cleanValue(text) };
+  return {};
+}
+
+function firstMatch(text, rx) {
+  const m = String(text || '').match(rx);
+  return m ? cleanValue(m[1]) : '';
+}
+
+function sliceBetween(text, startRx, endRx) {
+  const start = text.search(startRx);
+  if (start < 0) return '';
+  const rest = text.slice(start);
+  const end = rest.search(endRx);
+  return end > 0 ? rest.slice(0, end) : rest;
+}
+
+function sliceFrom(text, startRx) {
+  const start = text.search(startRx);
+  return start >= 0 ? text.slice(start) : '';
+}
+
+function educationFromText(text) {
+  const options = ["Bachelor's Degree", 'Polytechnic Diploma', "Master's/PhD", 'ITE/NITEC', 'Secondary School', 'Primary School'];
+  return options.find((o) => text.toLowerCase().includes(o.toLowerCase())) || '';
+}
+
+function cleanValue(value) {
+  return String(value || '').replace(/\s+/g, ' ').replace(/^[-:]+|[-:]+$/g, '').trim();
+}
+
+function titleCase(value) {
+  return cleanValue(value).replace(/\w\S*/g, (w) => w[0].toUpperCase() + w.slice(1).toLowerCase());
+}
+
+function fieldLabel(id) {
+  return ({
+    f_p_edu: 'plaintiff education', f_p_occ: 'plaintiff occupation', f_p_sal: 'plaintiff salary',
+    f_d_edu: 'defendant education', f_d_occ: 'defendant occupation', f_d_sal: 'defendant salary',
+    f_m_cert: 'marriage certificate number', f_m_date: 'marriage date', f_m_venue: 'venue',
+    f_ground: 'ground', f_custody: 'custody', f_hdb_addr: 'HDB address',
+    f_child_naf: 'child nafkah', f_self_naf: 'self nafkah', f_bk: 'bankruptcy status',
+  }[id] || id);
 }

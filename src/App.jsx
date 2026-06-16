@@ -49,7 +49,11 @@ export default function App() {
     clearSession();
     engine.lang = l;
     engine.step = 1;
-    engine.form = { fields: {}, filled: {}, flash: {}, secDone: {}, talakRows: [], childrenRows: [], showRevocRow: false, showBkRow: false, progressPct: 0 };
+    engine.form = {
+      fields: {}, filled: {}, flash: {}, secDone: {}, talakRows: [], childrenRows: [],
+      showRevocRow: false, showBkRow: false, progressPct: 0, activeSection: 1,
+      unlockedSection: 1, validationIssues: {}, justUnlockedSection: null,
+    };
     engine.talakData = []; engine.numTalakSessions = 0; engine.witnessState = {};
     engine.messages = [];
     setSaved(null);
@@ -64,7 +68,7 @@ export default function App() {
         <ResumeBanner lang={lang} saved={saved} onResume={resume} onStartNew={startNew} />
       )}
       <div className="main-layout">
-        <OsForm lang={lang} form={engine.form} />
+        <OsForm lang={lang} form={engine.form} engine={engine} />
         <ChatPanel
           engine={engine}
           lang={lang}

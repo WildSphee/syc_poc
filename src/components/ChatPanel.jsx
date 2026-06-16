@@ -27,6 +27,7 @@ export default function ChatPanel({ engine, lang, messages, progressPct }) {
     if (!msg || sending) return;
     setInput('');
     engine.pushUserText(msg);
+    if (engine.handleChatText?.(msg)) return;
     if (!hasApiKey()) {
       engine.pushAIText(t('use_buttons'));
       return;
@@ -50,8 +51,8 @@ export default function ChatPanel({ engine, lang, messages, progressPct }) {
       <div className="chat-header">
         <div className="chat-avatar">🤖</div>
         <div className="chat-header-info">
-          <div className="chat-name">Aisha · SYC Navigator</div>
-          <div className="chat-sub">Divorce Filing Assistant</div>
+          <div className="chat-name">Aisha AI</div>
+          <div className="chat-sub">GenAI Filing Assistant</div>
         </div>
         <div className="chat-user-badge">{t('user').split(' · ')[0]}</div>
       </div>
