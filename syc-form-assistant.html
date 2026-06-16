@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SYC OS Form Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#f0f2f5;min-height:100vh}
+
+/* ── TOP BAR ── */
+.top-bar{position:fixed;top:0;left:0;right:0;height:52px;background:#1c3460;display:flex;align-items:center;padding:0 18px;z-index:200;gap:12px}
+.top-logo{color:#fff;font-weight:700;font-size:14px;letter-spacing:.3px}
+.top-logo span{color:#4ecdc4;margin-right:6px;font-size:16px}
+.top-steps{display:flex;gap:0;margin-left:auto;margin-right:12px}
+.top-step{font-size:10px;color:#a0b0cc;padding:4px 10px;border-radius:4px;font-weight:500;transition:.2s}
+.top-step.active{background:#4ecdc4;color:#1c3460;font-weight:700}
+.top-step.done{color:#4ecdc4}
+.lang-row{display:flex;gap:4px}
+.lang-btn{background:transparent;border:1px solid #4ecdc4;color:#4ecdc4;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600}
+.lang-btn.active{background:#4ecdc4;color:#1c3460}
+
+/* ── MAIN LAYOUT ── */
+.main-layout{display:flex;min-height:100vh;padding-top:52px}
+
+/* ── OS FORM PANEL ── */
+.form-panel{flex:1;overflow-y:auto;padding:24px 400px 60px 28px;min-width:0}
+.os-doc{background:#fff;border:1px solid #ddd;border-radius:6px;max-width:820px;margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.07);font-size:12.5px}
+.os-doc-header{background:#1c3460;color:#fff;padding:16px 24px;border-radius:6px 6px 0 0}
+.os-doc-header h1{font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;opacity:.8}
+.os-doc-header h2{font-size:15px;font-weight:700;margin-top:2px}
+.os-doc-header .os-ref{font-size:11px;opacity:.7;margin-top:4px}
+.os-section{border-bottom:1px solid #e8ecf2;padding:14px 24px}
+.os-section:last-child{border-bottom:none}
+.os-sec-title{font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#8090a8;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.os-sec-num{background:#f0f2f5;color:#1c3460;font-weight:800;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.os-sec-num.done{background:#4ecdc4;color:#fff}
+.os-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.os-party-col{padding:8px 12px;background:#f8f9fc;border-radius:6px}
+.os-party-lbl{font-size:10px;font-weight:700;color:#8090a8;text-transform:uppercase;margin-bottom:6px;letter-spacing:.5px}
+.os-row{display:flex;gap:6px;margin-bottom:4px;line-height:1.5}
+.os-lbl{color:#8090a8;font-size:11.5px;min-width:140px;flex-shrink:0}
+.os-val{color:#ccc;font-style:italic;font-size:11.5px;font-weight:400;transition:all .3s}
+.os-val.filled{color:#1c3460;font-style:normal;font-weight:500}
+.os-val.flash{background:#fff8c5;border-radius:3px;padding:0 3px}
+.os-talak-row{background:#f8f9fc;border-radius:4px;padding:6px 10px;margin-bottom:4px;font-size:11.5px}
+.os-children-row{background:#f8f9fc;border-radius:4px;padding:6px 10px;margin-bottom:4px;font-size:11.5px}
+.os-status{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:6px}
+.os-status.pending{background:#fef3e2;color:#c87d2a}
+.os-status.done-s{background:#e8f7f0;color:#27ae60}
+.os-divider{height:1px;background:#f0f2f5;margin:6px 0}
+
+/* ── CHAT OVERLAY ── */
+.chat-panel{position:fixed;right:0;top:52px;bottom:0;width:380px;background:#fff;border-left:1px solid #e0e6ef;display:flex;flex-direction:column;z-index:100;box-shadow:-4px 0 18px rgba(0,0,0,.08)}
+.chat-header{background:#1c3460;color:#fff;padding:10px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.chat-avatar{width:32px;height:32px;background:#4ecdc4;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.chat-header-info{flex:1}
+.chat-header-info .chat-name{font-weight:700;font-size:13px}
+.chat-header-info .chat-sub{font-size:10px;opacity:.7}
+.chat-user-badge{background:#4ecdc4;color:#1c3460;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px}
+.chat-prog{height:3px;background:#e0e6ef;flex-shrink:0}
+.chat-prog-fill{height:100%;background:linear-gradient(90deg,#4ecdc4,#1c3460);transition:width .6s ease}
+.chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#f7f9fc}
+.chat-input-row{padding:10px;border-top:1px solid #e0e6ef;display:flex;gap:8px;flex-shrink:0;background:#fff}
+.chat-input-box{flex:1;border:1px solid #dce3ed;border-radius:20px;padding:8px 14px;font-size:13px;outline:none;font-family:'Inter',sans-serif}
+.chat-input-box:focus{border-color:#4ecdc4}
+.chat-send-btn{background:#1c3460;color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;cursor:pointer;font-weight:600}
+/* bubbles */
+.ai-bubble{background:#fff;border:1px solid #e8ecf2;border-radius:12px 12px 12px 0;padding:10px 12px;font-size:12.5px;line-height:1.6;max-width:96%;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.user-bubble{background:#1c3460;color:#fff;border-radius:12px 12px 0 12px;padding:8px 12px;font-size:12.5px;max-width:80%;margin-left:auto}
+.typing-dot{display:inline-flex;gap:4px;padding:10px 14px;background:#fff;border:1px solid #e8ecf2;border-radius:12px 12px 12px 0}
+.typing-dot span{width:6px;height:6px;background:#aab;border-radius:50%;animation:bounce .9s infinite}
+.typing-dot span:nth-child(2){animation-delay:.15s}
+.typing-dot span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+/* form elements inside chat */
+.card{background:#f7f9fc;border:1px solid #e0e6ef;border-radius:8px;padding:10px 12px;margin:4px 0;font-size:12px}
+.card-title{font-weight:700;font-size:11px;color:#8090a8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.card-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f0f2f5;font-size:12px}
+.card-row:last-child{border:none}
+.card-label{color:#8090a8}
+.card-value{color:#1c3460;font-weight:500;text-align:right}
+.btn{border:none;border-radius:20px;padding:8px 16px;font-size:12px;cursor:pointer;font-weight:600;transition:.2s}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:#1c3460;color:#fff}
+.btn-secondary{background:#4ecdc4;color:#1c3460}
+.btn:not(.btn-primary):not(.btn-secondary){background:#f0f2f5;color:#333}
+.btn:not(:disabled):hover{opacity:.85}
+.choice-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.fbox{background:#f7f9fc;border:1px solid #e0e6ef;border-radius:8px;padding:10px 12px;margin-top:6px}
+.fbox-t{font-weight:700;font-size:11px;color:#8090a8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fgrid.full{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:3px}
+.flbl{font-size:11px;color:#8090a8;font-weight:500}
+.fin{border:1px solid #dce3ed;border-radius:6px;padding:6px 8px;font-size:12px;outline:none;font-family:'Inter',sans-serif;background:#fff}
+.fin:focus{border-color:#4ecdc4}
+.fin.locked{background:#f0f2f5;color:#888}
+.fsel{border:1px solid #dce3ed;border-radius:6px;padding:6px 8px;font-size:12px;background:#fff;outline:none}
+.fradg{display:flex;flex-direction:column;gap:6px;margin:4px 0}
+.frad{display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+.fbox-sect{font-size:11px;font-weight:600;color:#666;margin:8px 0 4px;padding-top:6px;border-top:1px solid #e8ecf2}
+.sgdi{display:flex;border:1px solid #dce3ed;border-radius:6px;overflow:hidden}
+.sgdp{background:#e8ecf2;padding:6px 8px;font-size:11px;color:#666;font-weight:600}
+.sgdi input{flex:1;border:none;padding:6px 8px;font-size:12px;outline:none}
+.note{font-size:11px;color:#8090a8;background:#f7f9fc;border-left:3px solid #4ecdc4;padding:6px 10px;border-radius:0 4px 4px 0;margin-top:6px}
+.ground-card{background:#fff;border:1.5px solid #e0e6ef;border-radius:10px;padding:10px;text-align:center;cursor:pointer;transition:.2s}
+.ground-card:hover{border-color:#4ecdc4;background:#f0fffe}
+.ground-arabic{font-size:20px;color:#4ecdc4;margin-bottom:2px}
+.ground-en{font-weight:700;font-size:12px;color:#1c3460}
+.ground-bm{font-size:10px;color:#8090a8;margin-top:2px}
+.grid-4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.sess-badge{background:#1c3460;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px}
+.sess-summary{background:#f7f9fc;border:1px solid #e0e6ef;border-radius:8px;padding:8px 12px;font-size:12px}
+.bypass-card{background:#edfaf3;border:1.5px solid #27ae60;border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:8px}
+.bypass-icon{color:#27ae60;font-weight:900;font-size:16px}
+.bypass-main{font-size:12px;font-weight:600;color:#1a5c35}
+.bypass-note{font-size:11px;color:#27ae60;margin-top:2px}
+.duration-pill{background:#f0f2f5;border-radius:6px;padding:2px 8px;font-size:11px;margin-left:6px}
+.duration-badge{background:#4ecdc4;color:#1c3460;font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:4px}
+.preview-doc{background:#fff;border:1px solid #e0e6ef;border-radius:8px;padding:10px;font-size:12px;max-height:320px;overflow-y:auto}
+.doc-header{font-weight:700;font-size:13px;color:#1c3460;text-align:center;padding:6px 0 10px;border-bottom:1px solid #e0e6ef;margin-bottom:8px}
+.doc-section{margin-bottom:8px;padding-bottom:8px;border-bottom:1px dashed #e8ecf2}
+.doc-section:last-child{border:none;margin-bottom:0}
+.doc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8090a8;margin-bottom:3px}
+.doc-value{font-size:12px;color:#333;line-height:1.6}
+.check-box{display:flex;align-items:flex-start;gap:8px;margin-top:10px;font-size:12px;line-height:1.5}
+.check-box input{margin-top:2px;flex-shrink:0}
+.success-box{background:#edfaf3;border:1.5px solid #27ae60;border-radius:10px;padding:14px;text-align:center}
+.success-icon{font-size:28px;color:#27ae60;margin-bottom:4px}
+.success-title{font-weight:700;font-size:14px;color:#1a5c35;margin-bottom:4px}
+.success-ref{font-size:12px;font-weight:600;color:#1c3460;margin-bottom:4px}
+.success-text{font-size:11px;color:#555;line-height:1.6}
+.next-steps{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.step-item{display:flex;align-items:flex-start;gap:8px;font-size:12px}
+.step-num{width:20px;height:20px;background:#1c3460;color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.help-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.help-card{flex:1;min-width:80px;background:#f7f9fc;border:1px solid #e0e6ef;border-radius:8px;padding:8px;text-align:center;font-size:11px}
+.help-card-icon{font-size:18px;margin-bottom:3px}
+.help-card-title{font-weight:700;color:#1c3460;font-size:11px}
+.help-card-sub{color:#8090a8;font-size:10px;margin-top:2px}
+.live-card{cursor:pointer}
+.quote{background:#f7f9fc;border-left:3px solid #c8a951;padding:8px 12px;font-size:11.5px;color:#666;font-style:italic;border-radius:0 6px 6px 0;margin-top:8px}
+.mcp-check-row{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;border-bottom:1px solid #f0f2f5}
+.mcp-check-row:last-child{border:none}
+.mcp-dot{width:8px;height:8px;border-radius:50%;background:#4ecdc4;flex-shrink:0}
+.mcp-label{flex:1;color:#555}
+.mcp-status{font-size:10px;color:#27ae60;font-weight:600}
+.revoc-badge{background:#fef3e2;color:#c87d2a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;display:inline-block;margin-top:3px}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <span class="top-logo"><span>⚖</span><span id="topLogo">Syariah Court Singapore</span></span>
+  <div class="top-steps" id="topSteps"></div>
+  <div class="lang-row">
+    <button class="lang-btn active" id="langEN" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" id="langBM" onclick="setLang('bm')">BM</button>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+
+  <!-- OS FORM PANEL (background) -->
+  <div class="form-panel" id="formPanel">
+    <div class="os-doc">
+
+      <div class="os-doc-header">
+        <h1>In the Syariah Court of the Republic of Singapore</h1>
+        <h2>Originating Summons</h2>
+        <div class="os-ref">Case Ref: <span id="f_ref">SYC/OS/2026/——</span> &nbsp;|&nbsp; Filed: <span id="f_date">—</span></div>
+      </div>
+
+      <!-- Section 1: Parties -->
+      <div class="os-section" id="sec_parties">
+        <div class="os-sec-title"><span class="os-sec-num" id="secn_1">1</span> Parties to the Proceedings</div>
+        <div class="os-grid">
+          <div class="os-party-col">
+            <div class="os-party-lbl">Plaintiff (Applicant)</div>
+            <div class="os-row"><span class="os-lbl">Full Name</span><span class="os-val" id="f_p_name">—</span></div>
+            <div class="os-row"><span class="os-lbl">NRIC No.</span><span class="os-val" id="f_p_nric">—</span></div>
+            <div class="os-row"><span class="os-lbl">Date of Birth</span><span class="os-val" id="f_p_dob">—</span></div>
+            <div class="os-row"><span class="os-lbl">Citizenship</span><span class="os-val" id="f_p_citizenship">—</span></div>
+            <div class="os-row"><span class="os-lbl">Religion</span><span class="os-val" id="f_p_religion">—</span></div>
+            <div class="os-divider"></div>
+            <div class="os-row"><span class="os-lbl">Education</span><span class="os-val" id="f_p_edu">—</span></div>
+            <div class="os-row"><span class="os-lbl">Occupation</span><span class="os-val" id="f_p_occ">—</span></div>
+            <div class="os-row"><span class="os-lbl">Gross Salary</span><span class="os-val" id="f_p_sal">—</span></div>
+          </div>
+          <div class="os-party-col">
+            <div class="os-party-lbl">Defendant (Respondent)</div>
+            <div class="os-row"><span class="os-lbl">Full Name</span><span class="os-val" id="f_d_name">—</span></div>
+            <div class="os-row"><span class="os-lbl">NRIC No.</span><span class="os-val" id="f_d_nric">—</span></div>
+            <div class="os-row"><span class="os-lbl">Date of Birth</span><span class="os-val" id="f_d_dob">—</span></div>
+            <div class="os-row"><span class="os-lbl">Citizenship</span><span class="os-val" id="f_d_citizenship">—</span></div>
+            <div class="os-row"><span class="os-lbl">Religion</span><span class="os-val" id="f_d_religion">—</span></div>
+            <div class="os-divider"></div>
+            <div class="os-row"><span class="os-lbl">Education</span><span class="os-val" id="f_d_edu">—</span></div>
+            <div class="os-row"><span class="os-lbl">Occupation</span><span class="os-val" id="f_d_occ">—</span></div>
+            <div class="os-row"><span class="os-lbl">Gross Salary</span><span class="os-val" id="f_d_sal">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Marriage -->
+      <div class="os-section" id="sec_marriage">
+        <div class="os-sec-title"><span class="os-sec-num" id="secn_2">2</span> Marriage Certificate Details</div>
+        <div class="os-row"><span class="os-lbl">Certificate No.</span><span class="os-val" id="f_m_cert">—</span></div>
+        <div class="os-row"><span class="os-lbl">Date of Marriage</span><span class="os-val" id="f_m_date">—</span></div>
+        <div class="os-row"><span class="os-lbl">Venue</span><span class="os-val" id="f_m_venue">—</span></div>
+        <div class="os-row"><span class="os-lbl">Wali</span><span class="os-val" id="f_m_wali">—</span></div>
+        <div class="os-row"><span class="os-lbl">Mahr</span><span class="os-val" id="f_m_mahr">—</span></div>
+        <div class="os-row"><span class="os-lbl">Prior Pronouncement</span><span class="os-val" id="f_m_prior">—</span></div>
+        <div class="os-row" id="f_m_revoc_row" style="display:none"><span class="os-lbl">Revocation Cert</span><span class="os-val" id="f_m_revoc">—</span></div>
+      </div>
+
+      <!-- Section 3: Grounds -->
+      <div class="os-section" id="sec_grounds">
+        <div class="os-sec-title"><span class="os-sec-num" id="secn_3">3</span> Grounds for Divorce</div>
+        <div class="os-row"><span class="os-lbl">Ground</span><span class="os-val" id="f_ground">—</span></div>
+        <div id="f_talak_block" style="display:none;margin-top:8px">
+          <div style="font-size:10.5px;font-weight:700;color:#8090a8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Talak Pronouncement Sessions</div>
+          <div id="f_talak_sessions"></div>
+        </div>
+      </div>
+
+      <!-- Section 4: Children -->
+      <div class="os-section" id="sec_children">
+        <div class="os-sec-title"><span class="os-sec-num" id="secn_4">4</span> Children &amp; Custody</div>
+        <div id="f_children_list">
+          <div class="os-row"><span class="os-lbl">Children</span><span class="os-val">—</span></div>
+        </div>
+        <div class="os-row" style="margin-top:4px"><span class="os-lbl">Custody Arrangement</span><span class="os-val" id="f_custody">—</span></div>
+      </div>
+
+      <!-- Section 5: Property -->
+      <div class="os-section" id="sec_property">
+        <div class="os-sec-title"><span class="os-sec-num" id="secn_5">5</span> Matrimonial Property</div>
+        <div class="os-row"><span class="os-lbl">HDB Address</span><span class="os-val" id="f_hdb_addr">—</span></div>
+        <div class="os-row"><span class="os-lbl">Lease Year</span><span class="os-val" id="f_hdb_lease">—</span></div>
+        <div class="os-row"><span class="os-lbl">Estimated Value</span><span class="os-val" id="f_hdb_value">—</span></div>
+        <div class="os-row"><span class="os-lbl">Outstanding Loan</span><span class="os-val" id="f_hdb_loan">—</span></div>
+        <div class="os-row"><span class="os-lbl">Duration of Marriage</span><span class="os-val" id="f_duration">—</span></div>
+        <div class="os-row"><span class="os-lbl">Relief Sought</span><span class="os-val" id="f_relief">—</span></div>
+      </div>
+
+      <!-- Section 6: Maintenance -->
+      <div class="os-section" id="sec_maint">
+        <div class="os-sec-title"><span class="os-sec-num" id="secn_6">6</span> Maintenance &amp; Alimony</div>
+        <div class="os-row"><span class="os-lbl">Child Nafkah (Monthly)</span><span class="os-val" id="f_child_naf">—</span></div>
+        <div class="os-row"><span class="os-lbl">Self Nafkah Iddah</span><span class="os-val" id="f_self_naf">—</span></div>
+      </div>
+
+      <!-- Section 7: Bankruptcy -->
+      <div class="os-section" id="sec_bk">
+        <div class="os-sec-title"><span class="os-sec-num" id="secn_7">7</span> Bankruptcy &amp; Court Proceedings</div>
+        <div class="os-row"><span class="os-lbl">Status</span><span class="os-val" id="f_bk">—</span></div>
+        <div class="os-row" id="f_bk_detail_row" style="display:none"><span class="os-lbl">Details</span><span class="os-val" id="f_bk_details">—</span></div>
+      </div>
+
+      <!-- Section 8: Declaration -->
+      <div class="os-section" id="sec_declare">
+        <div class="os-sec-title"><span class="os-sec-num" id="secn_8">8</span> Declaration</div>
+        <div class="os-row"><span class="os-lbl">Declarant</span><span class="os-val" id="f_declarant">—</span></div>
+        <div class="os-row"><span class="os-lbl">Date</span><span class="os-val" id="f_declare_date">—</span></div>
+        <div class="os-row"><span class="os-lbl">Status</span><span class="os-val" id="f_declare_status">—</span></div>
+      </div>
+
+    </div><!-- /os-doc -->
+  </div><!-- /form-panel -->
+
+  <!-- AI CHAT OVERLAY -->
+  <div class="chat-panel">
+    <div class="chat-header">
+      <div class="chat-avatar">🤖</div>
+      <div class="chat-header-info">
+        <div class="chat-name" id="chatName">Aisha · SYC Navigator</div>
+        <div class="chat-sub" id="chatSub">Divorce Filing Assistant</div>
+      </div>
+      <div class="chat-user-badge" id="chatUserBadge">Nur Aisyah</div>
+    </div>
+    <div class="chat-prog"><div class="chat-prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="chat-messages" id="chatBox"></div>
+    <div class="chat-input-row">
+      <input class="chat-input-box" id="inputBox" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendFree()">
+      <button class="chat-send-btn" id="sendBtn" onclick="sendFree()">Send</button>
+    </div>
+  </div>
+
+</div><!-- /main-layout -->
+
+<script>
+// ── STATE ──
+let lang = 'en';
+let step = 1;
+let busy = false;
+let hasBK = false;
+let talakData = [];
+let numTalakSessions = 0;
+let revocData = { certNo: '', regDate: '' };
+let witnessState = {};
+let addlData = {
+    p: { edu: "Bachelor's Degree", occ: 'Senior Executive', sal: '5800' },
+    d: { edu: 'Polytechnic Diploma', occ: 'Operations Manager', sal: '6200' }
+};
+let citizenshipPassed = false;
+let selectedGround = '';
+let selectedGroundValue = '';
+let custodyValue = '';
+let reliefValue = '';
+let childNaf = 0;
+let selfNaf = 0;
+let bkStatus = false;
+let bkDetails = '';
+
+// ── TRANSLATIONS ──
+const text = {
+    en: {
+        logo:'Syariah Court Singapore',user:'Nur Aisyah · S8812345A',restart:'Restart',
+        steps:['Verify','MCP','Consent','Personal','Marriage','Children','Assets','Submit'],
+        greeting:'Assalamu alaikum. Welcome to the Divorce Navigator. Are you filing for:',
+        divorce:'Divorce',faraid:'Inheritance / Faraid',
+        farewell:'Thank you for your visit. Please contact our office for inheritance matters.',
+        lip:'Are you filing as a Litigant-in-Person (LIP)?',
+        yes:'Yes — I am representing myself (LIP)',with_lawyer:'No, I have a lawyer',
+        lawyer_msg:'You have a lawyer. Please use our Professional Portal to file. Thank you!',
+        mcp_check:'Checking your MCP records…',syc_records:'SYC Records',romm:'ROMM',mcp:'MCP',
+        connected:'Connected',found:'Marriage Certificate Found',completed:'Completed',
+        mcp_provider:'Provider',mcp_date:'Date',mcp_ref:'Reference',mcp_expiry:'Expiry',
+        continue_btn:'Continue',
+        data_consent:'Before we pull the rest of your information from HDB, MSF, and CPF, I need your formal consent. This allows me to pre-fill about 80% of your application so you don\'t have to hunt for old documents. Do you authorise me to retrieve this data for your filing?',
+        privacy:'Your privacy is protected under the Personal Data Protection Act.',
+        i_consent:'Yes, I consent.',i_decline:'No, I decline.',
+        consent_decline:'No problem. You can change your mind anytime and restart.',
+        personal_details:'Your Personal Details (from Singpass)',
+        plaintiff:'Plaintiff (You)',defendant:'Defendant (Spouse)',
+        full_name:'Full Name',nric:'NRIC',dob:'Date of Birth',citizenship:'Citizenship',
+        confirm_btn:'Confirm Personal Details',edit_addr_btn:'Edit Address',
+        addl_details:'Additional Details — Not held by Singpass',
+        religion:'Religion',education:'Education Level',occupation:'Occupation',salary:'Gross Monthly Salary',
+        confirm_addl:'Confirm Additional Details',
+        education_opts:['Primary School','Secondary School','ITE/NITEC','Polytechnic Diploma',"Bachelor's Degree","Master's/PhD",'Other'],
+        singapore_citizen:'Singapore Citizen',
+        jurisdiction:'Jurisdiction automatically established — Nur Aisyah is a Singapore Citizen. Jurisdiction step bypassed.',
+        step_bypassed:'This step is bypassed.',
+        residential:'3-year Residential History',period:'Period',from_date:'From Date',to_date:'To Date',address:'Address',add_period:'Add Period',
+        marriage_details:'Marriage Certificate Details',cert_no:'Certificate No.',marriage_date:'Marriage Date',
+        venue:'Venue',wali:'Wali (Father)',mahr:'Mahr',
+        prior_q:'Has there ever been a prior divorce pronouncement before this current marriage?',
+        no:'No',yes_prior:'Yes',revocation:'Revocation Details',
+        revoc_cert:'Revocation Certificate No.',revoc_date:'Date of Registration of Revocation',
+        confirm_revoc:'Confirm Revocation Details',
+        grounds:'Grounds for Divorce',grounds_note:'Select the ground that applies to your case.',
+        talak:'Talak',talak_desc:'Husband pronounces divorce',
+        fasakh:'Fasakh',fasakh_desc:'Wife seeks nullification',
+        taklik:'Taklik',taklik_desc:'Dissolution via conditional oath',
+        khuluk:'Khuluk',khuluk_desc:'Wife seeks release for compensation',
+        nafkah:'Nafkah failure',cruelty:'Cruelty',imprisonment:'Imprisonment',impotency:'Impotency',
+        desertion:'Desertion',harm:'Physical harm',nafkah_taklik:'Nafkah per Taklik',
+        agreed_comp:'Agreed compensation',not_agreed:'Not yet agreed',
+        talak_1:'Talak Satu',talak_2:'Talak Dua',not_yet:'Not Yet Pronounced',
+        session:'Session',of:'of',
+        date_talak:'Date of Talak Pronouncement',mode:'Mode of Pronouncement',
+        verbal:'Verbal (face-to-face)',written:'Written / Text Message',
+        witnesses:'Witnesses Present',witness_name:'Name',witness_nric:'NRIC',
+        add_witness:'Add a second witness?',confirm_session:'Confirm Session',session_confirmed:'confirmed',
+        children:'Children Details (from MSF/ICA)',birth_cert:'Birth Cert No.',
+        parenting:'Since there are children involved, the law requires us to file a Parenting Plan. This ensures their welfare is the priority. We\'ll tackle that in a moment. First, regarding legal custody — are you seeking Joint Custody (where both parents make major decisions together)?',
+        custody:'Custody Arrangement',joint:'Joint Custody',sole_me:'Sole Custody (me)',court_decide:'Court to determine',
+        hdb_details:'HDB Flat Details',block_street:'Block & Street',lease_year:'Lease Year',
+        loan_outstanding:'Outstanding Loan',property_value:'Estimated Property Value',
+        duration:'Duration of Marriage',auto_calc:'Auto-calculated',
+        relief:'What relief do you seek for the property?',
+        sell_50:'Sell on open market (50/50 split)',transfer:'Transfer share to spouse',retain:'Retain flat',
+        maintenance:'Maintenance & Alimony',child_nafkah:'Child Nafkah (Monthly)',self_nafkah:'Self Nafkah Iddah',
+        confirm_maint:'Confirm Maintenance',
+        bk_title:'Bankruptcy & Existing Court Proceedings',
+        bk_q:'Do you have any outstanding bankruptcy or existing court proceedings?',
+        bk_yes:'Yes — I have existing proceedings',bk_no:'No — None declared',
+        bk_details_lbl:'Please provide details:',bk_details_ph:'E.g. Case number, court, nature of proceedings…',
+        submit_bk:'Submit Details',
+        declare_prompt:'If this looks right, please check the box below to sign off on your declaration. Once you hit Complete, I will move this to the Back Filing of Originating Summons and guide you on the next steps for the court.',
+        complete_btn:'Complete & Back Filing',
+        process_complete:'Process complete. Your journey is moving forward. I\'ve saved a copy of these drafts to your dashboard. How are you feeling about the process so far?',
+        preview:'Preview Originating Summons',
+        i_declare:'I declare that the information above is true and correct.',
+        success:'Your petition has been filed successfully!',ref_no:'Reference No:',filed_date:'Filed:',
+        pending:'Status: Pending Review',next_step:'Next steps will be communicated via SMS/email.',
+        relieved:'I feel relieved',whats_next:'What comes next?',
+        step1:'Case is reviewed by our Syariah Judges',step2:'You will receive a hearing notice via SMS/email',
+        step3:'Attend hearing with your documents',step4:'Judge will make a decision',
+        thank_you:'Thank you for using the Divorce Navigator. May peace be upon you.',
+        quran:'(Surah At-Talaq 65:1)',
+        need_help:'Need more help? Here\'s how to reach us:',
+        website:'SYC Website',website_link:'www.syariahcourt.gov.sg',website_desc:'Forms, guides and e-services',
+        contact:'Contact Form',contact_link:'www.syariahcourt.gov.sg/contact',contact_desc:'Submit an enquiry online',
+        helpline:'Helpline',helpline_link:'1800-792-7424 (1800-SYARIAH)',helpline_desc:'Mon–Fri 8:30am–5:30pm',
+        use_buttons:'For guided filing, please use the action buttons above.',
+        personal_section:'Personal Details',marriage_section:'Marriage Details',grounds_section:'Grounds for Divorce',
+        talak_section:'Talak Pronouncements',custody_section:'Children & Custody',
+        property_section:'Property & Assets',maint_section:'Maintenance & Alimony',bk_section:'Bankruptcy & Court Proceedings'
+    },
+    bm: {
+        logo:'Mahkamah Syariah Singapura',user:'Nur Aisyah · S8812345A',restart:'Mulai Semula',
+        steps:['Semak ID','MCP','Kebenaran','Peribadi','Perkahwinan','Kanak-kanak','Aset','Hantar'],
+        greeting:'Assalamualaikum. Selamat datang ke Panduan Perceraian. Anda memfailkan untuk:',
+        divorce:'Perceraian',faraid:'Warisan / Faraid',
+        farewell:'Terima kasih. Sila hubungi pejabat kami untuk hal-hal warisan.',
+        lip:'Adakah anda memfailkan sebagai Litigant-in-Person (LIP)?',
+        yes:'Ya, saya memfailkan sendiri',with_lawyer:'Tidak, saya ada peguam',
+        lawyer_msg:'Anda mempunyai peguam. Sila gunakan Portal Profesional kami.',
+        mcp_check:'Memeriksa rekod MCP anda…',syc_records:'Rekod SYC',romm:'ROMM',mcp:'MCP',
+        connected:'Bersambung',found:'Sijil Perkahwinan Ditemui',completed:'Selesai',
+        mcp_provider:'Penyedia',mcp_date:'Tarikh',mcp_ref:'Rujukan',mcp_expiry:'Luput',
+        continue_btn:'Teruskan',
+        data_consent:'Sebelum kami menarik maklumat anda daripada HDB, MSF, dan CPF, saya memerlukan kebenaran rasmi anda. Ini membolehkan saya mengisi kira-kira 80% permohonan anda terlebih dahulu. Adakah anda memberi kebenaran?',
+        privacy:'Privasi anda dilindungi oleh Akta Perlindungan Data Peribadi.',
+        i_consent:'Ya, saya bersetuju.',i_decline:'Tidak, saya tidak bersetuju.',
+        consent_decline:'Tiada masalah. Anda boleh mulai semula pada bila-bila masa.',
+        personal_details:'Butiran Peribadi Anda (daripada Singpass)',
+        plaintiff:'Plaintif (Anda)',defendant:'Defendan (Pasangan)',
+        full_name:'Nama Penuh',nric:'NRIC',dob:'Tarikh Lahir',citizenship:'Warganegara',
+        confirm_btn:'Sahkan Butiran Peribadi',edit_addr_btn:'Ubah Alamat',
+        addl_details:'Butiran Tambahan — Tidak dipegang oleh Singpass',
+        religion:'Agama',education:'Tahap Pendidikan',occupation:'Pekerjaan',salary:'Gaji Kasar Bulanan',
+        confirm_addl:'Sahkan Butiran Tambahan',
+        education_opts:['Sekolah Rendah','Sekolah Menengah','ITE/NITEC','Diploma Politeknik','Ijazah Sarjana Muda','Ijazah Sarjana/PhD','Lain-lain'],
+        singapore_citizen:'Warganegara Singapura',
+        jurisdiction:'Bidangkuasa ditetapkan — Nur Aisyah adalah warganegara Singapura. Langkah bidangkuasa dilangkau.',
+        step_bypassed:'Langkah ini dilangkau.',
+        residential:'Sejarah Kediaman 3 Tahun',period:'Tempoh',from_date:'Tarikh Mula',to_date:'Tarikh Akhir',address:'Alamat',add_period:'Tambah Tempoh',
+        marriage_details:'Butiran Sijil Perkahwinan',cert_no:'No. Sijil',marriage_date:'Tarikh Perkahwinan',
+        venue:'Tempat',wali:'Wali (Bapa)',mahr:'Mahr',
+        prior_q:'Adakah pernah ada lafaz perceraian sebelum perkahwinan semasa ini?',
+        no:'Tidak',yes_prior:'Ya',revocation:'Butiran Pembatalan',
+        revoc_cert:'No. Sijil Pembatalan',revoc_date:'Tarikh Pendaftaran Pembatalan',confirm_revoc:'Sahkan Butiran Pembatalan',
+        grounds:'Alasan untuk Perceraian',grounds_note:'Pilih alasan yang berkenaan dengan kes anda.',
+        talak:'Talak',talak_desc:'Suami mengucapkan perceraian',
+        fasakh:'Fasakh',fasakh_desc:'Isteri memohon pembatalan',
+        taklik:'Taklik',taklik_desc:'Pembubaran melalui sumpah bersyarat',
+        khuluk:'Khuluk',khuluk_desc:'Isteri memohon pembebasan untuk pampasan',
+        nafkah:'Kegagalan nafkah',cruelty:'Kekejaman',imprisonment:'Pemenjaraan',impotency:'Ketidakmampuan',
+        desertion:'Pengabaian',harm:'Kemudaratan fizikal',nafkah_taklik:'Nafkah per Taklik',
+        agreed_comp:'Pampasan yang dipersetujui',not_agreed:'Belum dipersetujui',
+        talak_1:'Talak Satu',talak_2:'Talak Dua',not_yet:'Belum Diucapkan',
+        session:'Sesi',of:'daripada',
+        date_talak:'Tarikh Lafaz Talak',mode:'Cara Lafaz',
+        verbal:'Verbal (bersemuka)',written:'Bertulis / Mesej Teks',
+        witnesses:'Saksi-saksi Hadir',witness_name:'Nama',witness_nric:'NRIC',
+        add_witness:'Tambah saksi kedua?',confirm_session:'Sahkan Sesi',session_confirmed:'disahkan',
+        children:'Butiran Kanak-kanak (daripada MSF/ICA)',birth_cert:'No. Sijil Lahir',
+        parenting:'Memandangkan terdapat kanak-kanak yang terlibat, undang-undang memerlukan kami untuk memfailkan Pelan Keibubapaan. Pertama, berkenaan jagaan — adakah anda memohon Jagaan Bersama?',
+        custody:'Pengaturan Jagaan',joint:'Jagaan Bersama',sole_me:'Jagaan Tunggal (saya)',court_decide:'Mahkamah menentukan',
+        hdb_details:'Butiran Flat HDB',block_street:'Blok & Jalan',lease_year:'Tahun Pajakan',
+        loan_outstanding:'Pinjaman Tertunggak',property_value:'Nilai Anggaran Harta',
+        duration:'Tempoh Perkahwinan',auto_calc:'Dikira secara automatik',
+        relief:'Apakah bantuan yang anda mohon untuk harta itu?',
+        sell_50:'Jual di pasaran terbuka (50/50)',transfer:'Pindahkan bahagian kepada pasangan',retain:'Kekalkan flat',
+        maintenance:'Penjagaan & Alimoni',child_nafkah:'Nafkah Kanak-kanak (Bulanan)',self_nafkah:'Nafkah Diri Iddah',
+        confirm_maint:'Sahkan Penjagaan',
+        bk_title:'Kebankrapan & Prosiding Mahkamah Sedia Ada',
+        bk_q:'Adakah anda mempunyai sebarang kebankrapan tertunggak atau prosiding mahkamah sedia ada?',
+        bk_yes:'Ya — Saya ada prosiding sedia ada',bk_no:'Tidak — Tiada yang dinyatakan',
+        bk_details_lbl:'Sila berikan butiran:',bk_details_ph:'Cth. Nombor kes, mahkamah…',
+        submit_bk:'Hantar Butiran',
+        declare_prompt:'Jika ini kelihatan betul, sila tandakan kotak di bawah untuk menandatangani pengisytiharan anda.',
+        complete_btn:'Selesai & Pemfailan Belakang',
+        process_complete:'Proses selesai. Perjalanan anda sedang bergerak maju. Saya telah menyimpan salinan draf ini ke papan pemuka anda.',
+        preview:'Pratonton Saman Asal',
+        i_declare:'Saya mengisytiharkan bahawa maklumat di atas adalah benar dan betul.',
+        success:'Petisyen anda telah difailkan dengan berjaya!',ref_no:'No. Rujukan:',filed_date:'Difailkan:',
+        pending:'Status: Menunggu Semakan',next_step:'Langkah seterusnya akan dikomunikasikan melalui SMS/e-mel.',
+        relieved:'Saya berasa lega',whats_next:'Apa seterusnya?',
+        step1:'Kes disemak oleh Hakim Syariah kami',step2:'Anda akan menerima notis perbicaraan',
+        step3:'Hadir di perbicaraan dengan dokumen anda',step4:'Hakim akan membuat keputusan',
+        thank_you:'Terima kasih. Semoga kedamaian menyertai anda.',quran:'(Surah At-Talaq 65:1)',
+        need_help:'Perlukan bantuan lanjut?',website:'Laman Web SYC',website_link:'www.syariahcourt.gov.sg',website_desc:'Borang dan e-perkhidmatan',
+        contact:'Borang Hubungi',contact_link:'www.syariahcourt.gov.sg/contact',contact_desc:'Serahkan pertanyaan dalam talian',
+        helpline:'Talian Bantuan',helpline_link:'1800-792-7424',helpline_desc:'Isnin–Jumaat 8:30pagi–5:30petang',
+        use_buttons:'Sila gunakan butang tindakan di atas.',
+        personal_section:'Butiran Peribadi',marriage_section:'Butiran Perkahwinan',grounds_section:'Alasan Perceraian',
+        talak_section:'Lafaz Talak',custody_section:'Kanak-kanak & Jagaan',
+        property_section:'Harta & Aset',maint_section:'Penjagaan & Alimoni',bk_section:'Kebankrapan & Prosiding Mahkamah'
+    }
+};
+const t = k => text[lang][k] || k;
+
+// ── FORM FILL HELPER ──
+function fillField(id, val, sectionId) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = val;
+    el.classList.add('filled');
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 1200);
+    if (sectionId) {
+        const sec = document.getElementById(sectionId);
+        if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    }
+}
+function markSectionDone(n) {
+    const el = document.getElementById('secn_' + n);
+    if (el) el.classList.add('done');
+}
+
+// ── PROGRESS ──
+const TOTAL_STEPS = 8;
+function nextStep(n) {
+    step = n;
+    const pct = Math.round((n / TOTAL_STEPS) * 100);
+    document.getElementById('progFill').style.width = pct + '%';
+    drawProg();
+}
+function drawProg() {
+    const steps = t('steps');
+    document.getElementById('topSteps').innerHTML = steps.map((s, i) =>
+        `<div class="top-step${i + 1 === step ? ' active' : i + 1 < step ? ' done' : ''}">${s}</div>`
+    ).join('');
+    document.getElementById('topLogo').textContent = t('logo');
+    document.getElementById('chatUserBadge').textContent = t('user').split(' · ')[0];
+}
+
+// ── LANG ──
+function setLang(l) {
+    lang = l;
+    document.getElementById('langEN').classList.toggle('active', l === 'en');
+    document.getElementById('langBM').classList.toggle('active', l === 'bm');
+    const box = document.getElementById('chatBox');
+    box.innerHTML = '';
+    talakData = []; witnessState = {}; numTalakSessions = 0;
+    revocData = { certNo: '', regDate: '' };
+    selectedGround = ''; selectedGroundValue = '';
+    custodyValue = ''; reliefValue = '';
+    childNaf = 0; selfNaf = 0; bkStatus = false; bkDetails = '';
+    step = 1;
+    document.querySelectorAll('.os-val').forEach(el => {
+        el.textContent = '—'; el.classList.remove('filled', 'flash');
+    });
+    document.getElementById('progFill').style.width = '0%';
+    drawProg();
+    start();
+}
+
+// ── CHAT ENGINE ──
+function addMsg(html) {
+    const box = document.getElementById('chatBox');
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<div class="ai-bubble">${html}</div>`;
+    box.appendChild(wrap);
+    box.scrollTop = box.scrollHeight;
+}
+function addUser(txt) {
+    const box = document.getElementById('chatBox');
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<div class="user-bubble">${txt}</div>`;
+    box.appendChild(wrap);
+    box.scrollTop = box.scrollHeight;
+}
+function addAI(fn, cb) {
+    if (busy) return;
+    busy = true;
+    const box = document.getElementById('chatBox');
+    const dot = document.createElement('div');
+    dot.innerHTML = `<div class="typing-dot"><span></span><span></span><span></span></div>`;
+    box.appendChild(dot);
+    box.scrollTop = box.scrollHeight;
+    setTimeout(() => {
+        dot.remove();
+        fn();
+        busy = false;
+        if (cb) cb();
+        box.scrollTop = box.scrollHeight;
+    }, 700);
+}
+function disableLive() {
+    document.querySelectorAll('.live,.live-card').forEach(el => {
+        el.disabled = true; el.style.opacity = '.45'; el.style.pointerEvents = 'none';
+    });
+}
+function choice(label, fn) {
+    disableLive();
+    addUser(label);
+    setTimeout(() => fn(), 280);
+}
+
+// ── FLOW ──
+window.onload = () => { drawProg(); start(); };
+
+function start() {
+    addAI(() => {
+        addMsg(`<p>${t('greeting')}</p>
+            <div class="choice-btns">
+                <button class="btn btn-secondary live" onclick="choice('${t('divorce')}', showLIP)">${t('divorce')}</button>
+                <button class="btn live" onclick="choice('${t('faraid')}', showFaraid)">${t('faraid')}</button>
+            </div>`);
+    });
+}
+function showFaraid() { addAI(() => addMsg(`<p>${t('farewell')}</p>`)); }
+function showLIP() {
+    nextStep(1);
+    addAI(() => {
+        addMsg(`<p>${t('lip')}</p>
+            <div class="choice-btns">
+                <button class="btn btn-secondary live" onclick="choice('${t('yes')}', showMCP)">${t('yes')}</button>
+                <button class="btn live" onclick="choice('${t('with_lawyer')}', showLawyer)">${t('with_lawyer')}</button>
+            </div>`);
+    });
+}
+function showLawyer() { addAI(() => addMsg(`<p>${t('lawyer_msg')}</p>`)); }
+
+function showMCP() {
+    nextStep(2);
+    addAI(() => {
+        addMsg(`<p>${t('mcp_check')}</p>
+            <div style="margin:8px 0">
+                <div class="mcp-check-row"><div class="mcp-dot"></div><div class="mcp-label">${t('syc_records')}</div><div class="mcp-status">${t('connected')}</div></div>
+                <div class="mcp-check-row"><div class="mcp-dot"></div><div class="mcp-label">${t('romm')}</div><div class="mcp-status">${t('found')}</div></div>
+                <div class="mcp-check-row"><div class="mcp-dot"></div><div class="mcp-label">${t('mcp')}</div><div class="mcp-status">${t('completed')}</div></div>
+            </div>
+            <div class="card">
+                <div class="card-title">MCP Certificate</div>
+                <div class="card-row"><div class="card-label">${t('mcp_provider')}</div><div class="card-value">Kadi Syariah</div></div>
+                <div class="card-row"><div class="card-label">${t('mcp_date')}</div><div class="card-value">12 Jan 2026</div></div>
+                <div class="card-row"><div class="card-label">${t('mcp_ref')}</div><div class="card-value">MCP/2026/00892</div></div>
+                <div class="card-row"><div class="card-label">${t('mcp_expiry')}</div><div class="card-value">15 Jul 2026</div></div>
+            </div>
+            <button class="btn btn-secondary live" style="margin-top:8px" onclick="choice('${t('continue_btn')}', showConsent)">${t('continue_btn')}</button>`);
+    });
+}
+
+function showConsent() {
+    nextStep(3);
+    addAI(() => {
+        addMsg(`<p>${t('data_consent')}</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+                <div style="background:#fff5eb;border:1.5px solid #e07b2e;border-radius:8px;padding:10px;display:flex;align-items:flex-start;gap:8px">
+                    <div style="width:30px;height:30px;background:#e07b2e;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">🏠</div>
+                    <div><div style="font-weight:700;color:#e07b2e;font-size:11px">HDB</div><div style="font-size:10px;color:#666;line-height:1.4">Housing flat details &amp; loan</div></div>
+                </div>
+                <div style="background:#edfaf3;border:1.5px solid #27ae60;border-radius:8px;padding:10px;display:flex;align-items:flex-start;gap:8px">
+                    <div style="width:30px;height:30px;background:#27ae60;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">👪</div>
+                    <div><div style="font-weight:700;color:#27ae60;font-size:11px">MSF/ROMM</div><div style="font-size:10px;color:#666;line-height:1.4">Marriage &amp; family records</div></div>
+                </div>
+                <div style="background:#f5eefb;border:1.5px solid #8e44ad;border-radius:8px;padding:10px;display:flex;align-items:flex-start;gap:8px">
+                    <div style="width:30px;height:30px;background:#8e44ad;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">💰</div>
+                    <div><div style="font-weight:700;color:#8e44ad;font-size:11px">CPF</div><div style="font-size:10px;color:#666;line-height:1.4">Savings &amp; housing scheme</div></div>
+                </div>
+                <div style="background:#eaf2fb;border:1.5px solid #2980b9;border-radius:8px;padding:10px;display:flex;align-items:flex-start;gap:8px">
+                    <div style="width:30px;height:30px;background:#2980b9;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">🪪</div>
+                    <div><div style="font-weight:700;color:#2980b9;font-size:11px">Singpass</div><div style="font-size:10px;color:#666;line-height:1.4">NRIC, personal &amp; address</div></div>
+                </div>
+            </div>
+            <div class="note" style="margin-top:8px">${t('privacy')}</div>
+            <div class="choice-btns" style="margin-top:10px">
+                <button class="btn btn-primary live" onclick="choice('${t('i_consent')}', showPersonal)">${t('i_consent')}</button>
+                <button class="btn live" onclick="choice('${t('i_decline')}', showDecline)">${t('i_decline')}</button>
+            </div>`);
+    });
+}
+function showDecline() { addAI(() => addMsg(`<p>${t('consent_decline')}</p>`)); }
+
+function showPersonal() {
+    nextStep(4);
+    // Fill basic Singpass fields into form
+    fillField('f_p_name', 'Nur Aisyah Binte Mohd Yusof', 'sec_parties');
+    fillField('f_p_nric', 'S8812345A');
+    fillField('f_p_dob', '15 Mar 1988');
+    fillField('f_p_citizenship', t('singapore_citizen'));
+    fillField('f_d_name', 'Ahmad Fadzillah Bin Ramli');
+    fillField('f_d_nric', 'S8534567B');
+    fillField('f_d_dob', '22 Jul 1985');
+    fillField('f_d_citizenship', t('singapore_citizen'));
+    addAI(() => {
+        addMsg(`<p>${t('personal_details')}</p>
+            <div class="card">
+                <div class="card-title">${t('plaintiff')}</div>
+                <div class="card-row"><div class="card-label">${t('full_name')}</div><div class="card-value" style="font-weight:600">Nur Aisyah Binte Mohd Yusof</div></div>
+                <div class="card-row"><div class="card-label">${t('nric')}</div><div class="card-value">S8812345A</div></div>
+                <div class="card-row"><div class="card-label">${t('dob')}</div><div class="card-value">15 Mar 1988</div></div>
+                <div class="card-row"><div class="card-label">${t('citizenship')}</div><div class="card-value">${t('singapore_citizen')}</div></div>
+            </div>
+            <div class="card" style="margin-top:6px">
+                <div class="card-title">${t('defendant')}</div>
+                <div class="card-row"><div class="card-label">${t('full_name')}</div><div class="card-value" style="font-weight:600">Ahmad Fadzillah Bin Ramli</div></div>
+                <div class="card-row"><div class="card-label">${t('nric')}</div><div class="card-value">S8534567B</div></div>
+                <div class="card-row"><div class="card-label">${t('dob')}</div><div class="card-value">22 Jul 1985</div></div>
+                <div class="card-row"><div class="card-label">${t('citizenship')}</div><div class="card-value">${t('singapore_citizen')}</div></div>
+            </div>
+            <div class="choice-btns" style="gap:6px;margin-top:8px">
+                <button class="btn btn-secondary live" onclick="choice('${t('confirm_btn')}', showPersonalAdditional)">${t('confirm_btn')}</button>
+                <button class="btn live" onclick="choice('${t('edit_addr_btn')}', showEditAddr)">${t('edit_addr_btn')}</button>
+            </div>`);
+    });
+}
+function showEditAddr() { addAI(() => addMsg(`<p>Address editing interface would go here.</p>`)); }
+
+function showPersonalAdditional() {
+    fillField('f_p_religion', 'Islam');
+    fillField('f_d_religion', 'Islam');
+    addAI(() => {
+        addMsg(`<p>${t('addl_details')}</p>
+            <div class="fbox">
+                <div class="fbox-t">${t('plaintiff')}</div>
+                <div class="fgrid full"><div class="fg"><label class="flbl">${t('religion')}</label><input type="text" class="fin locked" value="Islam" readonly></div></div>
+                <div class="fgrid">
+                    <div class="fg"><label class="flbl">${t('education')}</label>
+                        <select class="fsel" id="p_edu">${t('education_opts').map(o => `<option value="${o}" ${o===addlData.p.edu?'selected':''}>${o}</option>`).join('')}</select>
+                    </div>
+                    <div class="fg"><label class="flbl">${t('occupation')}</label><input type="text" class="fin" id="p_occ" value="${addlData.p.occ}"></div>
+                </div>
+                <div class="fgrid full"><div class="fg"><label class="flbl">${t('salary')}</label><div class="sgdi"><div class="sgdp">SGD</div><input type="number" class="fin" id="p_sal" value="${addlData.p.sal}" style="border:none"></div></div></div>
+                <div class="fbox-t" style="margin-top:10px">${t('defendant')}</div>
+                <div class="fgrid full"><div class="fg"><label class="flbl">${t('religion')}</label><input type="text" class="fin locked" value="Islam" readonly></div></div>
+                <div class="fgrid">
+                    <div class="fg"><label class="flbl">${t('education')}</label>
+                        <select class="fsel" id="d_edu">${t('education_opts').map(o => `<option value="${o}" ${o===addlData.d.edu?'selected':''}>${o}</option>`).join('')}</select>
+                    </div>
+                    <div class="fg"><label class="flbl">${t('occupation')}</label><input type="text" class="fin" id="d_occ" value="${addlData.d.occ}"></div>
+                </div>
+                <div class="fgrid full"><div class="fg"><label class="flbl">${t('salary')}</label><div class="sgdi"><div class="sgdp">SGD</div><input type="number" class="fin" id="d_sal" value="${addlData.d.sal}" style="border:none"></div></div></div>
+                <button class="btn btn-secondary live" style="margin-top:10px" onclick="confirmAddl()">${t('confirm_addl')}</button>
+            </div>`);
+    });
+}
+function confirmAddl() {
+    addlData.p.edu = document.getElementById('p_edu').value;
+    addlData.p.occ = document.getElementById('p_occ').value;
+    addlData.p.sal = document.getElementById('p_sal').value;
+    addlData.d.edu = document.getElementById('d_edu').value;
+    addlData.d.occ = document.getElementById('d_occ').value;
+    addlData.d.sal = document.getElementById('d_sal').value;
+    fillField('f_p_edu', addlData.p.edu);
+    fillField('f_p_occ', addlData.p.occ);
+    fillField('f_p_sal', 'SGD ' + addlData.p.sal + '/mth');
+    fillField('f_d_edu', addlData.d.edu);
+    fillField('f_d_occ', addlData.d.occ);
+    fillField('f_d_sal', 'SGD ' + addlData.d.sal + '/mth');
+    markSectionDone(1);
+    disableLive();
+    addUser(t('confirm_addl'));
+    setTimeout(() => checkCitizenship(), 280);
+}
+function checkCitizenship() {
+    citizenshipPassed = true;
+    addAI(() => {
+        addMsg(`<div class="bypass-card">
+            <div class="bypass-icon">✓</div>
+            <div class="bypass-content"><div class="bypass-main">${t('jurisdiction')}</div><div class="bypass-note">${t('step_bypassed')}</div></div>
+        </div>
+        <button class="btn btn-secondary live" style="margin-top:8px" onclick="choice('${t('continue_btn')}', showMarriage)">${t('continue_btn')}</button>`);
+    });
+}
+
+function showMarriage() {
+    nextStep(5);
+    fillField('f_m_cert', 'ROMM/2010/0042378', 'sec_marriage');
+    fillField('f_m_date', '12 Feb 2010');
+    fillField('f_m_venue', 'Masjid Al-Falah');
+    fillField('f_m_wali', 'Mohd Yusof Bin Ibrahim');
+    fillField('f_m_mahr', 'SGD 4,500 (cash)');
+    fillField('f_m_prior', t('no'));
+    addAI(() => {
+        addMsg(`<p>${t('marriage_details')}</p>
+            <div class="card">
+                <div class="card-row"><div class="card-label">${t('cert_no')}</div><div class="card-value">ROMM/2010/0042378</div></div>
+                <div class="card-row"><div class="card-label">${t('marriage_date')}</div><div class="card-value">12 Feb 2010</div></div>
+                <div class="card-row"><div class="card-label">${t('venue')}</div><div class="card-value">Masjid Al-Falah</div></div>
+                <div class="card-row"><div class="card-label">${t('wali')}</div><div class="card-value">Mohd Yusof Bin Ibrahim</div></div>
+                <div class="card-row"><div class="card-label">${t('mahr')}</div><div class="card-value">SGD 4,500 (cash)</div></div>
+            </div>
+            <div class="note" style="margin-top:6px">${t('prior_q')}</div>
+            <div class="choice-btns" style="margin-top:8px">
+                <button class="btn btn-primary live" onclick="choice('${t('no')}', showGrounds)">${t('no')}</button>
+                <button class="btn live" onclick="choice('${t('yes_prior')}', showRevocation)">${t('yes_prior')}</button>
+            </div>`);
+    });
+}
+function showRevocation() {
+    fillField('f_m_prior', t('yes_prior'));
+    addAI(() => {
+        addMsg(`<p>${t('revocation')}</p>
+            <div class="fbox">
+                <div class="fgrid full"><div class="fg"><label class="flbl">${t('revoc_cert')}</label><input type="text" class="fin" id="revoc_cert"></div></div>
+                <div class="fgrid full"><div class="fg"><label class="flbl">${t('revoc_date')}</label><input type="date" class="fin" id="revoc_date"></div></div>
+                <button class="btn btn-secondary live" style="margin-top:8px" onclick="confirmRevoc()">${t('confirm_revoc')}</button>
+            </div>`);
+    });
+}
+function confirmRevoc() {
+    revocData.certNo = document.getElementById('revoc_cert').value;
+    revocData.regDate = document.getElementById('revoc_date').value;
+    document.getElementById('f_m_revoc_row').style.display = 'flex';
+    fillField('f_m_revoc', revocData.certNo + ' (' + revocData.regDate + ')');
+    disableLive(); addUser(t('confirm_revoc'));
+    setTimeout(() => {
+        addAI(() => {
+            addMsg(`<div class="sess-summary">
+                <div><strong>${t('revoc_cert')}:</strong> ${revocData.certNo}</div>
+                <div><strong>${t('revoc_date')}:</strong> ${revocData.regDate}</div>
+            </div>
+            <button class="btn btn-secondary live" style="margin-top:8px" onclick="choice('${t('continue_btn')}', showGrounds)">${t('continue_btn')}</button>`);
+        });
+    }, 280);
+}
+
+function showGrounds() {
+    markSectionDone(2);
+    addAI(() => {
+        addMsg(`<p>${t('grounds')}</p>
+            <div class="grid-4">
+                <div class="ground-card live-card" onclick="groundChoice('talak','Talak')"><div class="ground-arabic">١</div><div class="ground-en">${t('talak')}</div><div class="ground-bm">${t('talak_desc')}</div></div>
+                <div class="ground-card live-card" onclick="groundChoice('fasakh','Fasakh')"><div class="ground-arabic">ف</div><div class="ground-en">${t('fasakh')}</div><div class="ground-bm">${t('fasakh_desc')}</div></div>
+                <div class="ground-card live-card" onclick="groundChoice('taklik','Taklik')"><div class="ground-arabic">ت</div><div class="ground-en">${t('taklik')}</div><div class="ground-bm">${t('taklik_desc')}</div></div>
+                <div class="ground-card live-card" onclick="groundChoice('khuluk','Khuluk')"><div class="ground-arabic">خ</div><div class="ground-en">${t('khuluk')}</div><div class="ground-bm">${t('khuluk_desc')}</div></div>
+            </div>
+            <div class="note" style="margin-top:8px">${t('grounds_note')}</div>`);
+    });
+}
+function groundChoice(type, name) {
+    selectedGround = type; selectedGroundValue = name;
+    fillField('f_ground', name, 'sec_grounds');
+    disableLive(); addUser(name);
+    setTimeout(() => {
+        if (type === 'talak') showTalak();
+        else if (type === 'fasakh') showFasakh();
+        else if (type === 'taklik') showTaklik();
+        else showKhuluk();
+    }, 280);
+}
+function showTalak() {
+    addAI(() => {
+        addMsg(`<div class="grid-4">
+            <div class="ground-card live-card" onclick="selectTalak(1,'${t('talak_1')}')"><div class="ground-arabic">١</div><div class="ground-en">${t('talak_1')}</div></div>
+            <div class="ground-card live-card" onclick="selectTalak(2,'${t('talak_2')}')"><div class="ground-arabic">٢</div><div class="ground-en">${t('talak_2')}</div></div>
+            <div class="ground-card live-card" onclick="choice('${t('not_yet')}',showChildren)"><div class="ground-arabic">？</div><div class="ground-en">${t('not_yet')}</div></div>
+        </div>`);
+    });
+}
+function selectTalak(num, label) {
+    numTalakSessions = num;
+    disableLive(); addUser(label);
+    fillField('f_ground', 'Talak — ' + label, 'sec_grounds');
+    document.getElementById('f_talak_block').style.display = 'block';
+    setTimeout(() => showTalakSession(1), 280);
+}
+function showTalakSession(sessionNum) {
+    addAI(() => {
+        addMsg(`<p><span class="sess-badge">${t('session')} ${sessionNum} ${t('of')} ${numTalakSessions}</span></p>
+            <div class="fbox">
+                <div class="fbox-t">${t('date_talak')}</div>
+                <div class="fgrid full"><div class="fg"><label class="flbl">${t('date_talak')}</label><input type="date" class="fin" id="talak_date_${sessionNum}"></div></div>
+                <div class="fbox-sect">${t('mode')}</div>
+                <div class="fradg">
+                    <label class="frad"><input type="radio" name="mode_${sessionNum}" value="verbal"> ${t('verbal')}</label>
+                    <label class="frad"><input type="radio" name="mode_${sessionNum}" value="written"> ${t('written')}</label>
+                </div>
+                <div class="fbox-sect">${t('witnesses')}</div>
+                <div style="display:flex;gap:8px;margin:6px 0 2px">
+                    <button type="button" id="wit_no_${sessionNum}" class="btn" style="padding:5px 16px;font-size:12px;background:#f0f2f5;color:#555;border:1.5px solid #ddd" onclick="setWitness(${sessionNum},false)">${t('no')}</button>
+                    <button type="button" id="wit_yes_${sessionNum}" class="btn" style="padding:5px 16px;font-size:12px;background:#f0f2f5;color:#555;border:1.5px solid #ddd" onclick="setWitness(${sessionNum},true)">${t('yes_prior')}</button>
+                </div>
+                <div id="witness_form_${sessionNum}" style="display:none">
+                    <div class="fbox-sect">${t('witness_name')} 1</div>
+                    <div class="fgrid">
+                        <div class="fg"><label class="flbl">${t('witness_name')}</label><input type="text" class="fin" id="w1_name_${sessionNum}"></div>
+                        <div class="fg"><label class="flbl">${t('witness_nric')}</label><input type="text" class="fin" id="w1_nric_${sessionNum}"></div>
+                    </div>
+                    <label class="frad" style="margin-top:8px"><input type="checkbox" id="w2_check_${sessionNum}" onchange="toggleWitness2(${sessionNum})"> ${t('add_witness')}</label>
+                    <div id="witness2_form_${sessionNum}" style="display:none">
+                        <div class="fbox-sect" style="margin-top:6px">${t('witness_name')} 2</div>
+                        <div class="fgrid">
+                            <div class="fg"><label class="flbl">${t('witness_name')}</label><input type="text" class="fin" id="w2_name_${sessionNum}"></div>
+                            <div class="fg"><label class="flbl">${t('witness_nric')}</label><input type="text" class="fin" id="w2_nric_${sessionNum}"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary live" style="margin-top:10px" onclick="confirmTalakSession(${sessionNum})">${t('confirm_session')} ${sessionNum}</button>
+            </div>`);
+    });
+}
+function setWitness(sn, val) {
+    witnessState[sn] = val;
+    document.getElementById('witness_form_' + sn).style.display = val ? 'block' : 'none';
+    const nb = document.getElementById('wit_no_' + sn), yb = document.getElementById('wit_yes_' + sn);
+    if (nb && yb) {
+        nb.style.background  = val ? '#f0f2f5' : '#1c3460'; nb.style.color = val ? '#555' : '#fff'; nb.style.borderColor = val ? '#ddd' : '#1c3460';
+        yb.style.background  = val ? '#1c3460' : '#f0f2f5'; yb.style.color = val ? '#fff' : '#555'; yb.style.borderColor = val ? '#1c3460' : '#ddd';
+    }
+}
+function toggleWitness2(sn) {
+    document.getElementById('witness2_form_' + sn).style.display = document.getElementById('w2_check_' + sn).checked ? 'block' : 'none';
+}
+function confirmTalakSession(sessionNum) {
+    const data = {
+        date: document.getElementById('talak_date_' + sessionNum).value,
+        mode: document.querySelector('input[name="mode_' + sessionNum + '"]:checked')?.value || '',
+        witnesses: witnessState[sessionNum] || false,
+        witness1: { name: document.getElementById('w1_name_' + sessionNum)?.value || '', nric: document.getElementById('w1_nric_' + sessionNum)?.value || '' },
+        witness2: { name: document.getElementById('w2_name_' + sessionNum)?.value || '', nric: document.getElementById('w2_nric_' + sessionNum)?.value || '' }
+    };
+    talakData.push(data);
+    // Update talak sessions in form
+    const modeLabel = data.mode === 'verbal' ? t('verbal') : data.mode === 'written' ? t('written') : '—';
+    const w1 = data.witnesses && data.witness1.name ? data.witness1.name + ' (' + data.witness1.nric + ')' : '';
+    const w2 = data.witnesses && data.witness2.name ? ', ' + data.witness2.name + ' (' + data.witness2.nric + ')' : '';
+    const wStr = data.witnesses ? (w1 ? w1 + w2 : t('yes_prior')) : t('no');
+    const row = document.createElement('div');
+    row.className = 'os-talak-row';
+    row.innerHTML = `<strong>${t('session')} ${sessionNum}:</strong> ${data.date || '—'} &bull; ${modeLabel} &bull; Witness: ${wStr}`;
+    document.getElementById('f_talak_sessions').appendChild(row);
+    disableLive(); addUser(t('confirm_session') + ' ' + sessionNum + ' ' + t('session_confirmed'));
+    setTimeout(() => {
+        if (sessionNum < numTalakSessions) showTalakSession(sessionNum + 1);
+        else showTalakSummary();
+    }, 280);
+}
+function showTalakSummary() {
+    addAI(() => {
+        let rows = '';
+        talakData.forEach((d, i) => {
+            const ml = d.mode === 'verbal' ? t('verbal') : d.mode === 'written' ? t('written') : '—';
+            const w1 = d.witnesses && d.witness1.name ? d.witness1.name + ' (' + d.witness1.nric + ')' : '';
+            const w2 = d.witnesses && d.witness2.name ? ', ' + d.witness2.name + ' (' + d.witness2.nric + ')' : '';
+            const wStr = d.witnesses ? (w1 ? w1 + w2 : t('yes_prior')) : t('no');
+            rows += `<div style="padding:6px 0;border-bottom:1px solid #e8ecf2;font-size:12px">
+                <div style="font-weight:700;color:#1c3460;margin-bottom:3px">${t('session')} ${i+1}</div>
+                <div style="display:grid;grid-template-columns:80px 1fr;gap:2px 6px;font-size:11.5px;color:#555">
+                    <span style="color:#888">${t('date_talak')}:</span><span>${d.date||'—'}</span>
+                    <span style="color:#888">${t('mode')}:</span><span>${ml}</span>
+                    <span style="color:#888">${t('witnesses')}:</span><span>${wStr}</span>
+                </div>
+            </div>`;
+        });
+        markSectionDone(3);
+        addMsg(`<div style="background:#f7f9fc;border:1px solid #e0e6ef;border-radius:8px;padding:8px 10px">${rows}</div>
+            <button class="btn btn-secondary live" style="margin-top:8px" onclick="choice('${t('continue_btn')}',showChildren)">${t('continue_btn')}</button>`);
+    });
+}
+function showFasakh() {
+    addAI(() => {
+        addMsg(`<div class="choice-btns">
+            <button class="btn live" onclick="choice('${t('nafkah')}',showChildren)">${t('nafkah')}</button>
+            <button class="btn live" onclick="choice('${t('cruelty')}',showChildren)">${t('cruelty')}</button>
+            <button class="btn live" onclick="choice('${t('imprisonment')}',showChildren)">${t('imprisonment')}</button>
+            <button class="btn live" onclick="choice('${t('impotency')}',showChildren)">${t('impotency')}</button>
+        </div>`);
+    });
+}
+function showTaklik() {
+    addAI(() => {
+        addMsg(`<div class="choice-btns">
+            <button class="btn live" onclick="choice('${t('desertion')}',showChildren)">${t('desertion')}</button>
+            <button class="btn live" onclick="choice('${t('harm')}',showChildren)">${t('harm')}</button>
+            <button class="btn live" onclick="choice('${t('nafkah_taklik')}',showChildren)">${t('nafkah_taklik')}</button>
+        </div>`);
+    });
+}
+function showKhuluk() {
+    addAI(() => {
+        addMsg(`<div class="choice-btns">
+            <button class="btn live" onclick="choice('${t('agreed_comp')}',showChildren)">${t('agreed_comp')}</button>
+            <button class="btn live" onclick="choice('${t('not_agreed')}',showChildren)">${t('not_agreed')}</button>
+        </div>`);
+    });
+}
+
+function showChildren() {
+    nextStep(6);
+    // Fill children into form
+    document.getElementById('f_children_list').innerHTML = `
+        <div class="os-children-row"><strong>1. Muhammad Irfan Bin Ahmad Fadzillah</strong> &bull; DOB: 03 May 2012 &bull; BC: T1234567A &bull; ${t('singapore_citizen')}</div>
+        <div class="os-children-row"><strong>2. Nur Insyirah Binte Ahmad Fadzillah</strong> &bull; DOB: 17 Nov 2014 &bull; BC: T1456789B &bull; ${t('singapore_citizen')}</div>`;
+    document.getElementById('sec_children').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    addAI(() => {
+        addMsg(`<p>${t('children')}</p>
+            <div class="card">
+                <div style="font-weight:700;font-size:12px;color:#1c3460;margin-bottom:6px">1. Muhammad Irfan Bin Ahmad Fadzillah</div>
+                <div class="card-row"><div class="card-label">${t('dob')}</div><div class="card-value">03 May 2012</div></div>
+                <div class="card-row"><div class="card-label">${t('birth_cert')}</div><div class="card-value">T1234567A</div></div>
+                <div class="card-row"><div class="card-label">${t('citizenship')}</div><div class="card-value">${t('singapore_citizen')}</div></div>
+            </div>
+            <div class="card" style="margin-top:6px">
+                <div style="font-weight:700;font-size:12px;color:#1c3460;margin-bottom:6px">2. Nur Insyirah Binte Ahmad Fadzillah</div>
+                <div class="card-row"><div class="card-label">${t('dob')}</div><div class="card-value">17 Nov 2014</div></div>
+                <div class="card-row"><div class="card-label">${t('birth_cert')}</div><div class="card-value">T1456789B</div></div>
+                <div class="card-row"><div class="card-label">${t('citizenship')}</div><div class="card-value">${t('singapore_citizen')}</div></div>
+            </div>
+            <div class="note" style="margin-top:8px">${t('parenting')}</div>
+            <div class="choice-btns" style="margin-top:8px">
+                <button class="btn live" onclick="pickCustody('${t('joint')}')">${t('joint')}</button>
+                <button class="btn live" onclick="pickCustody('${t('sole_me')}')">${t('sole_me')}</button>
+                <button class="btn live" onclick="pickCustody('${t('court_decide')}')">${t('court_decide')}</button>
+            </div>`);
+    });
+}
+function pickCustody(val) {
+    custodyValue = val;
+    fillField('f_custody', val, 'sec_children');
+    markSectionDone(4);
+    disableLive(); addUser(val);
+    setTimeout(() => showHDB(), 280);
+}
+
+function showHDB() {
+    nextStep(7);
+    fillField('f_hdb_addr', 'Blk 342 Tampines St 33', 'sec_property');
+    fillField('f_hdb_lease', '2011');
+    fillField('f_hdb_value', 'SGD 620,000');
+    fillField('f_hdb_loan', 'SGD 142,000');
+    fillField('f_duration', '16 years & 1 month');
+    addAI(() => {
+        addMsg(`<p>${t('hdb_details')}</p>
+            <div class="card">
+                <div class="card-row"><div class="card-label">${t('block_street')}</div><div class="card-value">Blk 342 Tampines St 33</div></div>
+                <div class="card-row"><div class="card-label">${t('lease_year')}</div><div class="card-value">2011</div></div>
+                <div class="card-row"><div class="card-label">${t('loan_outstanding')}</div><div class="card-value">SGD 142,000</div></div>
+                <div class="card-row"><div class="card-label">${t('property_value')}</div><div class="card-value">SGD 620,000</div></div>
+            </div>
+            <div style="margin-top:8px;font-size:12px"><strong>${t('duration')}:</strong><span class="duration-pill">16 years & 1 month <span class="duration-badge">${t('auto_calc')}</span></span></div>
+            <p style="margin-top:10px;font-size:12.5px">${t('relief')}</p>
+            <div class="choice-btns" style="margin-top:6px">
+                <button class="btn live" onclick="pickRelief('${t('sell_50')}')">${t('sell_50')}</button>
+                <button class="btn live" onclick="pickRelief('${t('transfer')}')">${t('transfer')}</button>
+                <button class="btn live" onclick="pickRelief('${t('retain')}')">${t('retain')}</button>
+            </div>`);
+    });
+}
+function pickRelief(val) {
+    reliefValue = val;
+    fillField('f_relief', val, 'sec_property');
+    markSectionDone(5);
+    disableLive(); addUser(val);
+    setTimeout(() => showMaintenance(), 280);
+}
+
+function showMaintenance() {
+    nextStep(8);
+    addAI(() => {
+        addMsg(`<p>${t('maintenance')}</p>
+            <div class="fbox">
+                <div class="fbox-t">${t('maintenance')}</div>
+                <div class="fgrid">
+                    <div class="fg"><label class="flbl">${t('child_nafkah')}</label><div class="sgdi"><div class="sgdp">SGD</div><input type="number" id="child_naf" value="0" min="0" style="border:none;padding:6px 8px;font-size:12px;outline:none"></div></div>
+                    <div class="fg"><label class="flbl">${t('self_nafkah')}</label><div class="sgdi"><div class="sgdp">SGD</div><input type="number" id="self_naf" value="0" min="0" style="border:none;padding:6px 8px;font-size:12px;outline:none"></div></div>
+                </div>
+                <button class="btn btn-secondary live" style="margin-top:10px" onclick="submitMaint()">${t('confirm_maint')}</button>
+            </div>`);
+    });
+}
+function submitMaint() {
+    childNaf = document.getElementById('child_naf').value || '0';
+    selfNaf  = document.getElementById('self_naf').value || '0';
+    fillField('f_child_naf', 'SGD ' + childNaf + '/mth', 'sec_maint');
+    fillField('f_self_naf',  'SGD ' + selfNaf);
+    markSectionDone(6);
+    disableLive(); addUser(t('confirm_maint'));
+    setTimeout(() => showBankruptcy(), 280);
+}
+function showBankruptcy() {
+    addAI(() => {
+        addMsg(`<div style="font-weight:700;font-size:13px;margin-bottom:6px;color:#1c3460">${t('bk_title')}</div>
+            <p>${t('bk_q')}</p>
+            <div class="choice-btns">
+                <button class="btn live" onclick="handleBK(false)">${t('bk_no')}</button>
+                <button class="btn live" onclick="handleBK(true)">${t('bk_yes')}</button>
+            </div>`);
+    });
+}
+function handleBK(hasIt) {
+    bkStatus = hasIt;
+    fillField('f_bk', hasIt ? 'Yes — proceedings exist' : 'None declared', 'sec_bk');
+    disableLive(); addUser(hasIt ? t('bk_yes') : t('bk_no'));
+    setTimeout(() => {
+        if (hasIt) {
+            addAI(() => {
+                addMsg(`<div class="fbox">
+                    <div class="fg"><label class="flbl">${t('bk_details_lbl')}</label>
+                        <textarea class="fin" id="bk_details" rows="3" placeholder="${t('bk_details_ph')}" style="resize:vertical;width:100%;box-sizing:border-box;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:12px"></textarea>
+                    </div>
+                    <button class="btn btn-secondary live" style="margin-top:8px" onclick="submitBKDetails()">${t('submit_bk')}</button>
+                </div>`);
+            });
+        } else {
+            markSectionDone(7); showPreview();
+        }
+    }, 280);
+}
+function submitBKDetails() {
+    bkDetails = document.getElementById('bk_details').value;
+    fillField('f_bk_details', bkDetails || '(no details)');
+    document.getElementById('f_bk_detail_row').style.display = 'flex';
+    markSectionDone(7);
+    disableLive(); addUser(t('submit_bk'));
+    setTimeout(() => showPreview(), 280);
+}
+
+function showPreview() {
+    const today = new Date().toLocaleDateString(lang === 'en' ? 'en-SG' : 'ms-MY');
+    fillField('f_ref', 'SYC/OS/2026/04/18742');
+    fillField('f_date', today);
+    addAI(() => {
+        const talakSessionsHtml = talakData.length > 0
+            ? talakData.map((d, i) => {
+                const ml = d.mode === 'verbal' ? t('verbal') : d.mode === 'written' ? t('written') : '—';
+                const w1 = d.witnesses && d.witness1.name ? d.witness1.name + ' (' + d.witness1.nric + ')' : '';
+                const w2 = d.witnesses && d.witness2.name ? ', ' + d.witness2.name + ' (' + d.witness2.nric + ')' : '';
+                const wStr = d.witnesses ? (w1 ? w1 + w2 : t('yes_prior')) : t('no');
+                return `<div style="margin-bottom:4px;font-size:12px"><strong>${t('session')} ${i+1}:</strong> ${d.date||'—'} &bull; ${ml} &bull; Witness: ${wStr}</div>`;
+            }).join('') : '<div style="color:#888;font-size:12px">N/A</div>';
+        const revocHtml = revocData.certNo ? `<br><span style="color:#c0392b;font-size:11px">⚠ Revocation Cert: ${revocData.certNo} (${revocData.regDate})</span>` : '';
+        const preview = `
+            <div class="doc-header">${t('preview')}</div>
+            <div class="doc-section">
+                <div class="doc-label">${t('personal_section')}</div>
+                <div class="doc-value" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:11.5px">
+                    <div><strong>${t('plaintiff')}</strong><br>Nur Aisyah Binte Mohd Yusof<br>S8812345A | 15 Mar 1988<br>${t('singapore_citizen')} | Islam<br>${addlData.p.edu}<br>${addlData.p.occ} | SGD ${addlData.p.sal}/mth</div>
+                    <div><strong>${t('defendant')}</strong><br>Ahmad Fadzillah Bin Ramli<br>S8534567B | 22 Jul 1985<br>${t('singapore_citizen')} | Islam<br>${addlData.d.edu}<br>${addlData.d.occ} | SGD ${addlData.d.sal}/mth</div>
+                </div>
+            </div>
+            <div class="doc-section">
+                <div class="doc-label">${t('marriage_section')}</div>
+                <div class="doc-value" style="font-size:11.5px">ROMM/2010/0042378 &bull; 12 Feb 2010 &bull; Masjid Al-Falah &bull; Mahr SGD 4,500${revocHtml}</div>
+            </div>
+            <div class="doc-section">
+                <div class="doc-label">${t('grounds_section')}</div>
+                <div class="doc-value" style="font-size:11.5px">${selectedGroundValue||'—'}${numTalakSessions>0?' — '+numTalakSessions+' session(s)':''}</div>
+            </div>
+            ${numTalakSessions > 0 ? `<div class="doc-section"><div class="doc-label">${t('talak_section')}</div><div class="doc-value">${talakSessionsHtml}</div></div>` : ''}
+            <div class="doc-section">
+                <div class="doc-label">${t('custody_section')}</div>
+                <div class="doc-value" style="font-size:11.5px">Muhammad Irfan (Age 13, T1234567A) &bull; Nur Insyirah (Age 10, T1456789B)<br><strong>${t('custody')}:</strong> ${custodyValue||'—'}</div>
+            </div>
+            <div class="doc-section">
+                <div class="doc-label">${t('property_section')}</div>
+                <div class="doc-value" style="font-size:11.5px">Blk 342 Tampines St 33 &bull; SGD 620,000 &bull; Loan SGD 142,000<br><strong>${t('relief')}:</strong> ${reliefValue||'—'}</div>
+            </div>
+            <div class="doc-section">
+                <div class="doc-label">${t('maint_section')}</div>
+                <div class="doc-value" style="font-size:11.5px">${t('child_nafkah')}: SGD ${childNaf}/mth &bull; ${t('self_nafkah')}: SGD ${selfNaf}</div>
+            </div>
+            <div class="doc-section">
+                <div class="doc-label">${t('bk_section')}</div>
+                <div class="doc-value" style="font-size:11.5px">${bkStatus ? '<span style="color:#c0392b">⚠ Yes — ' + bkDetails + '</span>' : '<span style="color:#27ae60">✓ None declared</span>'}</div>
+            </div>`;
+        addMsg(`<div class="preview-doc">${preview}</div>
+            <p style="margin:10px 0 6px;font-size:12px;color:#444;line-height:1.6">${t('declare_prompt')}</p>
+            <div class="check-box">
+                <input type="checkbox" id="declare_chk">
+                <label for="declare_chk" style="font-size:12px">${t('i_declare')}</label>
+            </div>
+            <button class="btn btn-primary live" id="submit_btn" disabled onclick="doSubmit()" style="width:100%;margin-top:10px">${t('complete_btn')}</button>`);
+        document.getElementById('declare_chk').onchange = () => {
+            document.getElementById('submit_btn').disabled = !document.getElementById('declare_chk').checked;
+        };
+    });
+}
+
+function doSubmit() {
+    const today = new Date().toLocaleDateString(lang === 'en' ? 'en-SG' : 'ms-MY');
+    fillField('f_declarant', 'Nur Aisyah Binte Mohd Yusof');
+    fillField('f_declare_date', today);
+    fillField('f_declare_status', 'Declared & Submitted ✓', 'sec_declare');
+    markSectionDone(8);
+    disableLive(); addUser(t('complete_btn'));
+    setTimeout(() => showSuccess(), 280);
+}
+function showSuccess() {
+    addAI(() => {
+        addMsg(`<div class="success-box">
+            <div class="success-icon">✓</div>
+            <div class="success-title">${t('success')}</div>
+            <div class="success-ref">${t('ref_no')} SYC/OS/2026/04/18742</div>
+            <div class="success-text">${t('pending')}<br>${t('next_step')}</div>
+        </div>
+        <p style="margin:12px 0 8px;font-size:12.5px;color:#333;line-height:1.6">${t('process_complete')}</p>
+        <div class="choice-btns">
+            <button class="btn btn-primary live" onclick="choice('${t('relieved')}',showThankYou)">${t('relieved')}</button>
+            <button class="btn live" onclick="choice('${t('whats_next')}',showNext)">${t('whats_next')}</button>
+        </div>`);
+    });
+}
+function showThankYou() {
+    addAI(() => {
+        addMsg(`<p>${t('thank_you')}</p>
+            <div class="quote">"So keep your duty to Allah and fear Him as much as you can…" ${t('quran')}</div>`);
+    });
+}
+function showNext() {
+    addAI(() => {
+        addMsg(`<div class="next-steps">
+            <div class="step-item"><div class="step-num">1</div><div>${t('step1')}</div></div>
+            <div class="step-item"><div class="step-num">2</div><div>${t('step2')}</div></div>
+            <div class="step-item"><div class="step-num">3</div><div>${t('step3')}</div></div>
+            <div class="step-item"><div class="step-num">4</div><div>${t('step4')}</div></div>
+        </div>`);
+    });
+}
+function sendFree() {
+    const box = document.getElementById('inputBox');
+    const msg = box.value.trim();
+    if (!msg) return;
+    box.value = '';
+    addUser(msg);
+    setTimeout(() => addAI(() => addMsg(`<p>${t('use_buttons')}</p>
+        <div class="help-row">
+            <div class="help-card"><div class="help-card-icon">🌐</div><div class="help-card-title">${t('website')}</div><div class="help-card-sub">${t('website_link')}</div></div>
+            <div class="help-card"><div class="help-card-icon">✉️</div><div class="help-card-title">${t('contact')}</div><div class="help-card-sub">${t('contact_link')}</div></div>
+            <div class="help-card"><div class="help-card-icon">📞</div><div class="help-card-title">${t('helpline')}</div><div class="help-card-sub">${t('helpline_link')}</div></div>
+        </div>`)), 500);
+}
+</script>
+</body>
+</html>
