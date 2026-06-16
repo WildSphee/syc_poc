@@ -30,7 +30,7 @@ const page = (w, h, inner) =>
 export const templates = [
   // ── ROMM Certificate of Marriage ──
   {
-    name: 'marriage-cert-romm',
+    name: 'marriage-cert-romm', format: 'pdf-text',
     width: 820, height: 1080,
     html: page(820, 1080, `
       <div style="padding:48px 56px">
@@ -72,7 +72,7 @@ export const templates = [
 
   // ── NRIC (Plaintiff) ──
   {
-    name: 'nric-plaintiff',
+    name: 'nric-plaintiff', format: 'pdf-image',
     width: 660, height: 416,
     html: page(660, 416, `
       <div style="padding:26px 30px">
@@ -100,7 +100,7 @@ export const templates = [
 
   // ── NRIC (Defendant) ──
   {
-    name: 'nric-defendant',
+    name: 'nric-defendant', format: 'png',
     width: 660, height: 416,
     html: page(660, 416, `
       <div style="padding:26px 30px">
@@ -128,7 +128,7 @@ export const templates = [
 
   // ── MCP completion certificate ──
   {
-    name: 'mcp-certificate',
+    name: 'mcp-certificate', format: 'pdf-text',
     width: 820, height: 620,
     html: page(820, 620, `
       <div style="padding:44px 56px">
@@ -148,7 +148,7 @@ export const templates = [
 
   // ── Children's birth certificates (combined sheet) ──
   {
-    name: 'birth-cert-children',
+    name: 'birth-cert-children', format: 'pdf-image',
     width: 820, height: 1000,
     html: page(820, 1000, `
       <div style="padding:40px 56px">
@@ -181,7 +181,7 @@ export const templates = [
 
   // ── HDB statement ──
   {
-    name: 'hdb-statement',
+    name: 'hdb-statement', format: 'pdf-text',
     width: 820, height: 700,
     html: page(820, 700, `
       <div style="padding:44px 56px">
@@ -201,7 +201,7 @@ export const templates = [
 
   // ── CPF statement ──
   {
-    name: 'cpf-statement',
+    name: 'cpf-statement', format: 'png',
     width: 820, height: 640,
     html: page(820, 640, `
       <div style="padding:44px 56px">
@@ -219,7 +219,7 @@ export const templates = [
 
   // ── Talak evidence note ──
   {
-    name: 'talak-evidence',
+    name: 'talak-evidence', format: 'pdf-image',
     width: 820, height: 560,
     html: page(820, 560, `
       <div style="padding:44px 56px">

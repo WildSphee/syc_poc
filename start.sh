@@ -28,4 +28,17 @@ fi
 
 # 4. Run
 echo "→ Starting dev server…"
-exec npm run dev
+npm run dev &
+dev_pid=$!
+
+cleanup() {
+  if kill -0 "$dev_pid" 2>/dev/null; then
+    echo
+    echo "→ Stopping dev server (PID $dev_pid)…"
+    kill "$dev_pid" 2>/dev/null || true
+    wait "$dev_pid" 2>/dev/null || true
+  fi
+}
+
+trap cleanup EXIT INT TERM
+wait "$dev_pid"
