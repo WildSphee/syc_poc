@@ -183,12 +183,11 @@ export function createEngine() {
   engine.showMCP = function () {
     setStep(2);
     engine._resumeAt = 'showMCP';
-    addAI(() => addMsg(`<p>${t('mcp_check')}</p>`));
-    uploadStep({
+    addAI(() => addMsg(`<p>${t('mcp_check')}</p>`), () => uploadStep({
       specKey: 'mcp', promptKey: 'upload_mcp', sectionDone: null,
       apply: () => {},
       next: Object.assign(() => engine.showConsent(), { resumeKey: 'showMCP' }),
-    });
+    }));
   };
 
   engine.showConsent = function () {
@@ -207,8 +206,7 @@ export function createEngine() {
   engine.showPersonal = function () {
     setStep(4);
     engine._resumeAt = 'showPersonal';
-    addAI(() => addMsg(`<p>${t('personal_details')}</p>`));
-    uploadStep({
+    addAI(() => addMsg(`<p>${t('personal_details')}</p>`), () => uploadStep({
       specKey: 'nric_p', promptKey: 'upload_nric_p',
       apply: (ex) => {
         if (ex.name) fill('f_p_name', ex.name, 'sec_parties');
@@ -218,7 +216,7 @@ export function createEngine() {
         fill('f_p_religion', 'Islam');
       },
       next: Object.assign(() => engine.showDefendantNric(), { resumeKey: 'showPersonal' }),
-    });
+    }));
   };
   engine.showDefendantNric = function () {
     uploadStep({
@@ -274,8 +272,7 @@ export function createEngine() {
   engine.showMarriage = function () {
     setStep(5);
     engine._resumeAt = 'showMarriage';
-    addAI(() => addMsg(`<p>${t('marriage_details')}</p>`));
-    uploadStep({
+    addAI(() => addMsg(`<p>${t('marriage_details')}</p>`), () => uploadStep({
       specKey: 'marriage', promptKey: 'upload_marriage',
       apply: (ex) => {
         if (ex.certNo) fill('f_m_cert', ex.certNo, 'sec_marriage');
@@ -287,7 +284,7 @@ export function createEngine() {
         engine.marriage = ex;
       },
       next: Object.assign(() => engine.askPrior(), { resumeKey: 'showMarriage' }),
-    });
+    }));
   };
   engine.askPrior = function () {
     addAI(() => addMsg(`<div class="note">${t('prior_q')}</div>
@@ -426,8 +423,7 @@ export function createEngine() {
     setStep(6);
     markSectionDone(3);
     engine._resumeAt = 'showChildren';
-    addAI(() => addMsg(`<p>${t('children')}</p>`));
-    uploadStep({
+    addAI(() => addMsg(`<p>${t('children')}</p>`), () => uploadStep({
       specKey: 'birth', promptKey: 'upload_birth',
       apply: (ex) => {
         const kids = Array.isArray(ex.children) ? ex.children : [];
@@ -436,7 +432,7 @@ export function createEngine() {
           `<strong>${i + 1}. ${c.name || '—'}</strong> &bull; DOB: ${c.dob || '—'} &bull; BC: ${c.birthCertNo || '—'} &bull; ${c.citizenship || t('singapore_citizen')}`);
       },
       next: Object.assign(() => engine.askCustody(), { resumeKey: 'showChildren' }),
-    });
+    }));
   };
   engine.askCustody = function () {
     addAI(() => addMsg(`<div class="note">${t('parenting')}</div>
@@ -459,8 +455,7 @@ export function createEngine() {
   engine.showHDB = function () {
     setStep(7);
     engine._resumeAt = 'showHDB';
-    addAI(() => addMsg(`<p>${t('hdb_details')}</p>`));
-    uploadStep({
+    addAI(() => addMsg(`<p>${t('hdb_details')}</p>`), () => uploadStep({
       specKey: 'hdb', promptKey: 'upload_hdb',
       apply: (ex) => {
         if (ex.address) fill('f_hdb_addr', ex.address, 'sec_property');
@@ -471,7 +466,7 @@ export function createEngine() {
         engine.property = ex;
       },
       next: Object.assign(() => engine.askRelief(), { resumeKey: 'showHDB' }),
-    });
+    }));
   };
   engine.askRelief = function () {
     addAI(() => addMsg(`<div style="margin-top:4px;font-size:12px"><strong>${t('duration')}:</strong>
