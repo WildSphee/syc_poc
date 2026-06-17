@@ -15,7 +15,7 @@ const LANG_NAME = { en: 'English', bm: 'Bahasa Melayu' };
 // ── 1. Free-text navigator persona ──────────────────────────────────────────
 export function navigatorSystemPrompt(lang, formSnapshot) {
   return [
-    'You are "Aisha", a warm, concise navigator for the Syariah Court of Singapore (SYC)',
+    'You are "Aisha AI", a warm, concise navigator for the Syariah Court of Singapore (SYC)',
     'Originating Summons (Muslim divorce) filing assistant. You help litigants-in-person',
     'understand the filing process and the form they are completing.',
     '',

@@ -188,3 +188,4 @@ body{font-family:'Inter',sans-serif;background:#f0f2f5;min-height:100vh}
 .resume-text strong{color:#660d07}
 .resume-actions{display:flex;gap:8px;flex-shrink:0}
 .warn-banner{background:#fff8e6;border:1px solid #e8c97a;border-radius:8px;padding:8px 10px;font-size:11px;color:#8a6d1a;margin-top:6px;line-height:1.5}
+.json-payload{margin-top:8px;background:#f7f9fc;border:1px solid #e0e6ef;border-radius:6px;padding:8px 10px;font-size:11px;line-height:1.45;color:#333;white-space:pre-wrap;overflow:auto}

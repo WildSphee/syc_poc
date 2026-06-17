@@ -368,14 +368,7 @@ export function createEngine() {
     });
   };
   engine.showPersonalAdditional = function () {
-    const a = engine.addlData;
     setActiveSection(1);
-    fill('f_p_edu', engine.form.fields.f_p_edu || a.p.edu, 'sec_parties');
-    fill('f_p_occ', engine.form.fields.f_p_occ || a.p.occ);
-    fill('f_p_sal', engine.form.fields.f_p_sal || `SGD ${a.p.sal}/mth`);
-    fill('f_d_edu', engine.form.fields.f_d_edu || a.d.edu);
-    fill('f_d_occ', engine.form.fields.f_d_occ || a.d.occ);
-    fill('f_d_sal', engine.form.fields.f_d_sal || `SGD ${a.d.sal}/mth`);
     addAI(() => addMsg(`<p>${t('addl_details')}</p>
       <p>${t('chat_type_to_fill')}</p>
       <div class="note">${t('verify_before_next')}</div>`));
@@ -730,8 +723,9 @@ export function createEngine() {
     if (!Object.keys(updates).length) return false;
     for (const [id, val] of Object.entries(updates)) engine.setField(id, val);
     const labels = Object.keys(updates).map((id) => fieldLabel(id)).join(', ');
-    addAI(() => addMsg(`<p>${t('extracted_fields').replace('{fields}', escapeHtml(labels))}</p>
-      <div class="note">${engine.isSectionComplete(section) ? t('ready_to_continue') : t('missing_more_details')}</div>`));
+    addMsg(`<p>${t('extracted_fields').replace('{fields}', escapeHtml(labels))}</p>
+      <pre class="json-payload">${escapeHtml(JSON.stringify(updates, null, 2))}</pre>
+      <div class="note">${engine.isSectionComplete(section) ? t('ready_to_continue') : t('missing_more_details')}</div>`);
     return true;
   };
 
@@ -810,8 +804,12 @@ function extractSectionUpdates(section, text) {
 
 function extractParties(text) {
   const updates = {};
-  const p = sliceBetween(text, /plaintiff|applicant|you/i, /defendant|respondent|spouse/i) || text;
-  const d = sliceFrom(text, /defendant|respondent|spouse/i);
+  const p = sliceBetween(text, /plaintiff|applicant|you|\bi\b|\bmy\b/i, /defendant|respondent|spouse|husband|wife/i) || text;
+  const d = sliceFrom(text, /defendant|respondent|spouse|husband|wife/i);
+  if (/\b(defendant|respondent|spouse|husband|wife)\b/i.test(text) && !/\b(i|me|my|plaintiff|applicant|you)\b/i.test(text)) {
+    Object.assign(updates, extractPartyBlock(text, 'd'));
+    return updates;
+  }
   Object.assign(updates, extractPartyBlock(p, 'p'));
   if (d) Object.assign(updates, extractPartyBlock(d, 'd'));
   return updates;
@@ -821,8 +819,8 @@ function extractPartyBlock(block, party) {
   const out = {};
   const prefix = party === 'p' ? 'f_p_' : 'f_d_';
   const education = firstMatch(block, /education(?:\s+level)?\s*[:\n ]+(.+?)(?=\n|occupation|gross|salary|$)/i) || educationFromText(block);
-  const occupation = firstMatch(block, /occupation\s*[:\n ]+(.+?)(?=\n|gross|salary|education|$)/i);
-  const salary = firstMatch(block, /(?:gross\s+monthly\s+)?salary\s*[:\n ]+(?:sgd\s*)?([\d,]+(?:\.\d+)?)/i);
+  const occupation = firstMatch(block, /occupation\s*[:\n ]+(.+?)(?=\n|gross|salary|education|$)/i) || occupationFromText(block);
+  const salary = firstMatch(block, /(?:gross\s+monthly\s+)?salary\s*[:\n ]+(?:sgd\s*)?([\d,]+(?:\.\d+)?)/i) || salaryFromText(block);
   const name = firstMatch(block, /(?:full\s+)?name\s*[:\n ]+(.+?)(?=\n|nric|date|dob|$)/i);
   const nric = firstMatch(block, /\b([STFGM]\d{7}[A-Z])\b/i);
   const dob = firstMatch(block, /(?:dob|date\s+of\s+birth)\s*[:\n ]+(.+?)(?=\n|citizenship|religion|$)/i);
@@ -922,6 +920,23 @@ function sliceFrom(text, startRx) {
 function educationFromText(text) {
   const options = ["Bachelor's Degree", 'Polytechnic Diploma', "Master's/PhD", 'ITE/NITEC', 'Secondary School', 'Primary School'];
   return options.find((o) => text.toLowerCase().includes(o.toLowerCase())) || '';
+}
+
+function occupationFromText(text) {
+  const patterns = [
+    /\b(?:i|we)?\s*(?:work|working)\s+(?:as|as a|as an)\s+(.+?)(?=,|\.|;|\band\b|\bearning\b|\bearn\b|\bwith\b|$)/i,
+    /\b(?:my\s+)?(?:job|occupation|role)\s+(?:is|as)\s+(.+?)(?=,|\.|;|\band\b|\bearning\b|\bearn\b|$)/i,
+    /\b(?:i\s+am|i'm|im|spouse\s+is|husband\s+is|wife\s+is)\s+(?:a|an)?\s*(.+?)(?=,|\.|;|\band\b|\bearning\b|\bearn\b|\bsalary\b|$)/i,
+  ];
+  for (const rx of patterns) {
+    const value = firstMatch(text, rx);
+    if (value && !/\d/.test(value) && value.length <= 60) return titleCase(value.replace(/^(as\s+)?(a|an)\s+/i, ''));
+  }
+  return '';
+}
+
+function salaryFromText(text) {
+  return firstMatch(text, /\b(?:earn|earning|make|making|income(?:\s+is)?|salary(?:\s+is)?|paid)\s*(?:about|around)?\s*(?:sgd|\$)?\s*([\d,]+(?:\.\d+)?)(?:\s*(?:a|per)\s*(?:month|mth|monthly))?/i);
 }
 
 function cleanValue(value) {

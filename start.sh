@@ -27,8 +27,8 @@ if [ ! -d resources ] || [ -z "$(ls -A resources 2>/dev/null)" ]; then
 fi
 
 # 4. Run
-echo "→ Starting dev server…"
-npm run dev &
+echo "→ Starting dev server on port 5555…"
+npm run dev -- --host 0.0.0.0 --port 5555 &
 dev_pid=$!
 
 cleanup() {
