@@ -8,8 +8,47 @@
 
 import { text } from '../i18n.js';
 import { saveSession } from '../lib/session.js';
+import { reviewSection, hasApiKey } from '../lib/openai.js';
 
 const TOTAL_STEPS = 8;
+
+// Education levels offered on the form (used to guide LLM field extraction).
+const EDU_OPTIONS = [
+  'Primary School', 'Secondary School', 'ITE/NITEC',
+  'Polytechnic Diploma', "Bachelor's Degree", "Master's/PhD",
+];
+
+// Field-level hints the LLM uses to extract typed answers into the right field.
+const FIELD_SPECS = {
+  f_p_edu: { label: 'Plaintiff (you) — education level', options: EDU_OPTIONS },
+  f_p_occ: { label: 'Plaintiff (you) — occupation' },
+  f_p_sal: { label: 'Plaintiff (you) — gross monthly salary (SGD)', money: true },
+  f_d_edu: { label: 'Defendant (spouse) — education level', options: EDU_OPTIONS },
+  f_d_occ: { label: 'Defendant (spouse) — occupation' },
+  f_d_sal: { label: 'Defendant (spouse) — gross monthly salary (SGD)', money: true },
+  f_m_prior: { label: 'Any prior divorce/talak between the parties?', yesno: true },
+  f_m_revoc: { label: 'Revocation (ruju) certificate number' },
+  f_ground: { label: 'Ground for divorce', options: ['Talak', 'Fasakh', 'Taklik', 'Khuluk'] },
+  f_custody: { label: 'Custody arrangement', options: ['Joint custody', 'Sole custody', 'Court to determine'] },
+  f_relief: { label: 'Property relief sought' },
+  f_hdb_addr: { label: 'HDB / property address' },
+  f_hdb_value: { label: 'Estimated property value (SGD)', money: true },
+  f_child_naf: { label: 'Child maintenance (nafkah) — monthly amount (SGD)', money: true },
+  f_self_naf: { label: 'Wife / iddah maintenance — monthly amount (SGD)', money: true },
+  f_bk: { label: 'Any bankruptcy or court proceedings?', yesno: true },
+  f_bk_details: { label: 'Bankruptcy / proceedings details' },
+};
+
+// Which fields each section accepts as free-text chat input.
+const SECTION_TYPED_FIELDS = {
+  1: ['f_p_edu', 'f_p_occ', 'f_p_sal', 'f_d_edu', 'f_d_occ', 'f_d_sal'],
+  2: ['f_m_prior', 'f_m_revoc'],
+  3: ['f_ground'],
+  4: ['f_custody'],
+  5: ['f_relief', 'f_hdb_addr', 'f_hdb_value'],
+  6: ['f_child_naf', 'f_self_naf'],
+  7: ['f_bk', 'f_bk_details'],
+};
 let MSG_SEQ = 0;
 
 const SECTION_REQUIRED = {
@@ -205,20 +244,19 @@ export function createEngine() {
     return issues;
   };
   engine.forceContinueSection = function (n) { engine.continueSection(Number(n), true); };
-  engine.continueSection = function (n, force = false) {
-    n = Number(n || engine.form.activeSection || 1);
-    setActiveSection(n);
-    const issues = engine.validateSection(n);
-    engine.form.validationIssues[n] = issues;
-    notify();
-    if (issues.length && !force) {
-      addAI(() => addMsg(`<p>${t('verify_review')}</p>
-        <div class="warn-banner">${issues.map(escapeHtml).join('<br>')}</div>
-        <div class="choice-btns" style="margin-top:8px">
-          <button class="btn btn-secondary live" data-act="forceContinueSection" data-arg="${n}">${t('continue_anyway')}</button>
-        </div>`));
-      return;
+
+  // Build a { label: value } view of a section's entries for the LLM reviewer.
+  function sectionReviewValues(n) {
+    const ids = new Set([...(SECTION_REQUIRED[n] || []), ...(SECTION_TYPED_FIELDS[n] || [])]);
+    const out = {};
+    for (const id of ids) {
+      const v = engine.form.fields[id];
+      if (v != null && String(v).trim()) out[FIELD_SPECS[id]?.label || fieldLabel(id)] = v;
     }
+    return out;
+  }
+
+  function proceedSection(n) {
     engine.form.validationIssues[n] = [];
     markSectionDone(n);
     const next = n + 1;
@@ -227,6 +265,54 @@ export function createEngine() {
     const act = SECTION_NEXT_ACT[n];
     if (act && engine[act]) setTimeout(() => engine[act](), 950);
     persist();
+  }
+
+  function showReviewIssues(n, issues) {
+    engine.form.validationIssues[n] = issues;
+    notify();
+    addAI(() => addMsg(`<p>${t('verify_review')}</p>
+      <div class="warn-banner">${issues.map(escapeHtml).join('<br>')}</div>
+      <div class="choice-btns" style="margin-top:8px">
+        <button class="btn btn-secondary live" data-act="forceContinueSection" data-arg="${n}">${t('continue_anyway')}</button>
+      </div>`));
+  }
+
+  engine.continueSection = async function (n, force = false) {
+    n = Number(n || engine.form.activeSection || 1);
+    setActiveSection(n);
+
+    // Hard gate: required fields must be present (not overridable).
+    if (!engine.isSectionComplete(n)) {
+      const issues = engine.validateSection(n);
+      engine.form.validationIssues[n] = issues;
+      notify();
+      addAI(() => addMsg(`<p>${t('verify_review')}</p>
+        <div class="warn-banner">${issues.map(escapeHtml).join('<br>')}</div>`));
+      return;
+    }
+
+    // Soft gate: LLM sense-check (falls back to local heuristics without an API key).
+    if (!force) {
+      let issues = [];
+      if (hasApiKey()) {
+        const typingId = engine.addTyping();
+        try {
+          const review = await reviewSection(n, sectionReviewValues(n), { lang: engine.lang });
+          issues = review.status === 'review' ? (review.issues || []) : [];
+        } catch (e) {
+          issues = engine.validateSection(n);
+        }
+        engine.removeMsg(typingId);
+      } else {
+        issues = engine.validateSection(n);
+      }
+      if (issues.length) {
+        showReviewIssues(n, issues);
+        return;
+      }
+    }
+
+    proceedSection(n);
   };
 
   // ── persistence ──
@@ -713,6 +799,33 @@ export function createEngine() {
   engine.pushAIText = (txt) => addMsg(`<p>${escapeHtml(txt).replace(/\n/g, '<br>')}</p>`);
   engine.addTyping = () => { const id = ++MSG_SEQ; engine.messages.push({ id, kind: 'typing' }); notify(); return id; };
   engine.removeMsg = (id) => { engine.messages = engine.messages.filter((m) => m.id !== id); notify(); };
+  // ── chat-driven field extraction (LLM path lives in ChatPanel) ──
+  engine.isContinueIntent = (txt) => isContinueIntent(txt);
+  engine.typedFieldsForSection = function (n) {
+    return (SECTION_TYPED_FIELDS[n] || []).map((id) => ({ id, ...(FIELD_SPECS[id] || { label: id }) }));
+  };
+  // Apply an LLM-extracted { fieldId: value } payload, then echo it back as the
+  // key-value payload card and a completeness note.
+  engine.applyExtraction = function (section, updates) {
+    const allowed = new Set(SECTION_TYPED_FIELDS[section] || []);
+    const clean = {};
+    for (const [id, val] of Object.entries(updates || {})) {
+      if (!allowed.has(id)) continue;
+      if (val == null || String(val).trim() === '') continue;
+      clean[id] = val;
+    }
+    const ids = Object.keys(clean);
+    if (!ids.length) return false;
+    for (const id of ids) engine.setField(id, clean[id]);
+    const shown = {};
+    for (const id of ids) shown[id] = engine.form.fields[id];
+    const labels = ids.map((id) => fieldLabel(id)).join(', ');
+    addMsg(`<p>${t('extracted_fields').replace('{fields}', escapeHtml(labels))}</p>
+      <pre class="json-payload">${escapeHtml(JSON.stringify(shown, null, 2))}</pre>
+      <div class="note">${engine.isSectionComplete(section) ? t('ready_to_continue') : t('missing_more_details')}</div>`);
+    return true;
+  };
+
   engine.handleChatText = function (txt) {
     const section = engine.form.activeSection || 1;
     if (isContinueIntent(txt)) {
@@ -770,8 +883,14 @@ function sectionDomId(n) {
 }
 
 function parseMoney(value) {
-  const match = String(value || '').replace(/,/g, '').match(/(\d+(?:\.\d+)?)/);
-  return match ? Number(match[1]) : NaN;
+  const s = String(value || '').replace(/,/g, '');
+  const match = s.match(/(\d+(?:\.\d+)?)\s*([kKmM])?/);
+  if (!match) return NaN;
+  let n = Number(match[1]);
+  const suffix = (match[2] || '').toLowerCase();
+  if (suffix === 'k') n *= 1000;
+  else if (suffix === 'm') n *= 1000000;
+  return n;
 }
 
 function salaryIssue(who, occupation, salary, issues) {
@@ -952,7 +1071,10 @@ function fieldLabel(id) {
     f_p_edu: 'plaintiff education', f_p_occ: 'plaintiff occupation', f_p_sal: 'plaintiff salary',
     f_d_edu: 'defendant education', f_d_occ: 'defendant occupation', f_d_sal: 'defendant salary',
     f_m_cert: 'marriage certificate number', f_m_date: 'marriage date', f_m_venue: 'venue',
+    f_m_prior: 'prior divorce status', f_m_revoc: 'revocation certificate',
     f_ground: 'ground', f_custody: 'custody', f_hdb_addr: 'HDB address',
-    f_child_naf: 'child nafkah', f_self_naf: 'self nafkah', f_bk: 'bankruptcy status',
+    f_hdb_value: 'property value', f_relief: 'property relief',
+    f_child_naf: 'child nafkah', f_self_naf: 'self nafkah',
+    f_bk: 'bankruptcy status', f_bk_details: 'bankruptcy details',
   }[id] || id);
 }

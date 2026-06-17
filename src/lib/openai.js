@@ -7,6 +7,10 @@ import {
   navigatorSystemPrompt,
   documentReadPrompt,
   documentReadSchema,
+  fieldExtractPrompt,
+  fieldExtractSchema,
+  sectionReviewPrompt,
+  sectionReviewSchema,
 } from '../prompt.jsx';
 
 const API_URL = 'https://api.openai.com/v1/responses';
@@ -44,6 +48,61 @@ function outputText(json) {
     }
   }
   return parts.join('').trim();
+}
+
+// Parse a JSON object out of a model reply, salvaging from surrounding text.
+function parseJson(raw) {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    const m = raw.match(/\{[\s\S]*\}/);
+    if (m) return JSON.parse(m[0]);
+    throw new Error('Could not parse model JSON');
+  }
+}
+
+// ── Free-text → form-field extraction ───────────────────────────────────────
+// Returns { updates: { fieldId: value, ... }, note: string }.
+export async function extractFields(userMessage, { lang = 'en', section, fields = [], formSnapshot } = {}) {
+  const json = await callResponses({
+    reasoning: { effort: 'low' },
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'field_extract',
+        schema: fieldExtractSchema(),
+        strict: false,
+      },
+    },
+    input: [
+      { role: 'system', content: fieldExtractPrompt(section, fields, lang, formSnapshot) },
+      { role: 'user', content: userMessage },
+    ],
+  });
+  const out = parseJson(outputText(json));
+  return { updates: out.updates || {}, note: out.note || '' };
+}
+
+// ── Section sense-check before a section is saved ────────────────────────────
+// Returns { status: 'ok' | 'review', issues: string[] }.
+export async function reviewSection(section, fieldValues, { lang = 'en' } = {}) {
+  const json = await callResponses({
+    reasoning: { effort: 'low' },
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'section_review',
+        schema: sectionReviewSchema(),
+        strict: false,
+      },
+    },
+    input: [
+      { role: 'system', content: sectionReviewPrompt(section, fieldValues, lang) },
+      { role: 'user', content: 'Review this section before it is saved.' },
+    ],
+  });
+  const out = parseJson(outputText(json));
+  return { status: out.status || 'ok', issues: out.issues || [] };
 }
 
 // ── Free-text navigator chat ────────────────────────────────────────────────

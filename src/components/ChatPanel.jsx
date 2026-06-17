@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { text } from '../i18n.js';
 import UploadPrompt from './UploadPrompt.jsx';
-import { askAssistant, hasApiKey } from '../lib/openai.js';
+import { askAssistant, extractFields, hasApiKey } from '../lib/openai.js';
 
 export default function ChatPanel({ engine, lang, messages, progressPct }) {
   const t = (k) => text[lang][k] ?? k;
@@ -9,9 +9,16 @@ export default function ChatPanel({ engine, lang, messages, progressPct }) {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
 
+  // Autoscroll to the newest message. The engine mutates `messages` in place
+  // (stable reference), so we run this every render and key it off the live
+  // length + last id to catch new bubbles, typing dots, and removals alike.
+  const lastId = messages[messages.length - 1]?.id;
   useEffect(() => {
-    if (boxRef.current) boxRef.current.scrollTop = boxRef.current.scrollHeight;
-  }, [messages]);
+    const el = boxRef.current;
+    if (!el) return;
+    const raf = requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
+    return () => cancelAnimationFrame(raf);
+  }, [messages.length, lastId, sending]);
 
   // Delegate clicks on data-act buttons inside message HTML to the engine.
   function onBoxClick(e) {
@@ -27,17 +34,40 @@ export default function ChatPanel({ engine, lang, messages, progressPct }) {
     if (!msg || sending) return;
     setInput('');
     engine.pushUserText(msg);
-    if (engine.handleChatText?.(msg)) return;
+
+    // "continue / next / save" → run the gated continue (includes the LLM sense-check).
+    if (engine.isContinueIntent?.(msg)) {
+      engine.continueSection(engine.form.activeSection || 1);
+      return;
+    }
+
+    // No API key → fall back to the legacy regex extractor.
     if (!hasApiKey()) {
+      if (engine.handleChatText?.(msg)) return;
       engine.pushAIText(t('use_buttons'));
       return;
     }
+
     setSending(true);
     const typingId = engine.addTyping();
     try {
-      const reply = await askAssistant(msg, { lang, formSnapshot: engine.formSnapshot() });
-      engine.removeMsg(typingId);
-      engine.pushAIText(reply || t('use_buttons'));
+      const section = engine.form.activeSection || 1;
+      const { updates, note } = await extractFields(msg, {
+        lang,
+        section,
+        fields: engine.typedFieldsForSection(section),
+        formSnapshot: engine.formSnapshot(),
+      });
+      if (updates && Object.keys(updates).length && engine.applyExtraction(section, updates)) {
+        engine.removeMsg(typingId);
+      } else if (note) {
+        engine.removeMsg(typingId);
+        engine.pushAIText(note);
+      } else {
+        const reply = await askAssistant(msg, { lang, formSnapshot: engine.formSnapshot() });
+        engine.removeMsg(typingId);
+        engine.pushAIText(reply || t('use_buttons'));
+      }
     } catch (e) {
       engine.removeMsg(typingId);
       engine.pushAIText('⚠ ' + (e.message || 'AI request failed'));
