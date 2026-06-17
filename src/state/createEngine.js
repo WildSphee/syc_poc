@@ -30,7 +30,7 @@ const FIELD_SPECS = {
   f_m_revoc: { label: 'Revocation (ruju) certificate number' },
   f_ground: { label: 'Ground for divorce', options: ['Talak', 'Fasakh', 'Taklik', 'Khuluk'] },
   f_custody: { label: 'Custody arrangement', options: ['Joint custody', 'Sole custody', 'Court to determine'] },
-  f_relief: { label: 'Property relief sought' },
+  f_relief: { label: 'Property relief sought — what the plaintiff wants done with the flat', options: ['Sell on open market (50/50 split)', 'Transfer share to spouse', 'Retain flat'] },
   f_hdb_addr: { label: 'HDB / property address' },
   f_hdb_value: { label: 'Estimated property value (SGD)', money: true },
   f_child_naf: { label: 'Child maintenance (nafkah) — monthly amount (SGD)', money: true },
@@ -139,12 +139,17 @@ export function createEngine() {
   }
 
   // ── form helpers ──
-  function fill(id, val, sectionScroll) {
+  // `sectionScroll` (a DOM id) + flash highlight are used when a field is filled
+  // PROGRAMMATICALLY (chat extraction, document read). For direct user typing,
+  // pass sectionScroll = null and { flash:false } so the panel doesn't jump or flicker.
+  function fill(id, val, sectionScroll, opts = {}) {
     engine.form.fields[id] = val;
     engine.form.filled[id] = true;
-    engine.form.flash[id] = true;
+    if (opts.flash !== false) {
+      engine.form.flash[id] = true;
+      setTimeout(() => { engine.form.flash[id] = false; notify(); }, 1200);
+    }
     notify();
-    setTimeout(() => { engine.form.flash[id] = false; notify(); }, 1200);
     if (sectionScroll) {
       setTimeout(() => {
         const sec = document.getElementById(sectionScroll);
@@ -202,11 +207,13 @@ export function createEngine() {
     return v;
   }
 
-  engine.setField = function (id, value) {
-    const val = normalizeFieldValue(id, value);
+  // opts.silent — direct user typing in the form: keep the raw value (don't
+  // reformat money mid-keystroke), and skip the flash + auto-scroll animations.
+  engine.setField = function (id, value, opts = {}) {
+    const val = opts.silent ? String(value ?? '') : normalizeFieldValue(id, value);
     if (id === 'f_m_prior') engine.form.showRevocRow = /^yes/i.test(val);
     if (id === 'f_bk') engine.form.showBkRow = /^yes/i.test(val);
-    if (val) fill(id, val, sectionDomId(fieldSection(id)));
+    if (val.trim()) fill(id, val, opts.silent ? null : sectionDomId(fieldSection(id)), { flash: !opts.silent });
     else {
       delete engine.form.fields[id];
       delete engine.form.filled[id];
