@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="720" viewBox="0 0 1240 720">
+<rect width="100%" height="100%" fill="#F8FAFC"/>
+<text x="48" y="50" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#0F172A">SYC Production Delivery Timeline</text>
+<text x="48" y="78" font-family="Arial, sans-serif" font-size="14" fill="#475569">4 months from project start to production deployment, followed by 3 months PGP</text>
+<line x1="190" y1="100" x2="1180" y2="100" stroke="#CBD5E1" stroke-width="1"/>
+<line x1="190.0" y1="100" x2="190.0" y2="650" stroke="#E2E8F0" stroke-width="1"/>
+<text x="198.0" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Jul 2026</text>
+<line x1="332.7" y1="100" x2="332.7" y2="650" stroke="#E2E8F0" stroke-width="1"/>
+<text x="340.7" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Aug 2026</text>
+<line x1="475.5" y1="100" x2="475.5" y2="650" stroke="#E2E8F0" stroke-width="1"/>
+<text x="483.5" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Sep 2026</text>
+<line x1="613.6" y1="100" x2="613.6" y2="650" stroke="#E2E8F0" stroke-width="1"/>
+<text x="621.6" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Oct 2026</text>
+<line x1="756.4" y1="100" x2="756.4" y2="650" stroke="#E2E8F0" stroke-width="1"/>
+<text x="764.4" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Nov 2026</text>
+<line x1="894.5" y1="100" x2="894.5" y2="650" stroke="#E2E8F0" stroke-width="1"/>
+<text x="902.5" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Dec 2026</text>
+<line x1="1037.3" y1="100" x2="1037.3" y2="650" stroke="#E2E8F0" stroke-width="1"/>
+<text x="1045.3" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Jan 2027</text>
+<line x1="1180.0" y1="100" x2="1180.0" y2="650" stroke="#E2E8F0" stroke-width="1"/>
+<rect x="48" y="92" width="1132" height="48" fill="#FFFFFF" stroke="#E2E8F0"/>
+<rect x="48" y="140" width="1132" height="48" fill="#F1F5F9" stroke="#E2E8F0"/>
+<rect x="48" y="188" width="1132" height="48" fill="#FFFFFF" stroke="#E2E8F0"/>
+<rect x="48" y="236" width="1132" height="48" fill="#F1F5F9" stroke="#E2E8F0"/>
+<rect x="48" y="284" width="1132" height="48" fill="#FFFFFF" stroke="#E2E8F0"/>
+<rect x="48" y="332" width="1132" height="48" fill="#F1F5F9" stroke="#E2E8F0"/>
+<rect x="48" y="380" width="1132" height="48" fill="#FFFFFF" stroke="#E2E8F0"/>
+<rect x="48" y="428" width="1132" height="48" fill="#F1F5F9" stroke="#E2E8F0"/>
+<rect x="48" y="476" width="1132" height="48" fill="#FFFFFF" stroke="#E2E8F0"/>
+<rect x="48" y="524" width="1132" height="48" fill="#F1F5F9" stroke="#E2E8F0"/>
+<text x="64" y="121" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Planning</text>
+<text x="64" y="169" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Azure Infra</text>
+<text x="64" y="217" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Frontend</text>
+<text x="64" y="265" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Agentic AI</text>
+<text x="64" y="313" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Integrations</text>
+<text x="64" y="361" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">DevOps</text>
+<text x="64" y="409" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">SIT</text>
+<text x="64" y="457" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">UAT</text>
+<text x="64" y="505" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Go-Live</text>
+<text x="64" y="553" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">PGP</text>
+<rect x="190.0" y="102" width="87.5" height="28" rx="5" fill="#315A9E"/>
+<text x="198.0" y="120" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Design</text>
+<rect x="222.2" y="150" width="142.7" height="28" rx="5" fill="#0F766E"/>
+<text x="230.2" y="168" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Azure Foundation</text>
+<rect x="286.7" y="198" width="207.2" height="28" rx="5" fill="#B45309"/>
+<text x="294.7" y="216" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Portal Upgrade</text>
+<rect x="318.9" y="246" width="239.4" height="28" rx="5" fill="#7C3AED"/>
+<text x="326.9" y="264" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Agentic Orchestration</text>
+<rect x="383.4" y="294" width="207.2" height="28" rx="5" fill="#BE123C"/>
+<text x="391.4" y="312" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Integration Build</text>
+<rect x="254.5" y="342" width="271.7" height="28" rx="5" fill="#2563EB"/>
+<text x="262.5" y="360" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">CI/CD and Code Scan</text>
+<rect x="503.1" y="390" width="110.5" height="28" rx="5" fill="#64748B"/>
+<text x="511.1" y="408" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">SIT</text>
+<rect x="613.6" y="438" width="55.3" height="28" rx="5" fill="#059669"/>
+<text x="673.9" y="456" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#059669">UAT 1</text>
+<rect x="668.9" y="438" width="50.7" height="28" rx="5" fill="#16A34A"/>
+<text x="724.5" y="456" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#16A34A">UAT 2</text>
+<rect x="719.5" y="486" width="36.8" height="28" rx="5" fill="#DC2626"/>
+<text x="761.4" y="504" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#DC2626">Deploy</text>
+<rect x="756.4" y="534" width="138.1" height="28" rx="5" fill="#0891B2"/>
+<text x="764.4" y="552" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">PGP Month 1</text>
+<rect x="894.5" y="534" width="142.7" height="28" rx="5" fill="#0E7490"/>
+<text x="902.5" y="552" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">PGP Month 2</text>
+<rect x="1037.3" y="534" width="142.7" height="28" rx="5" fill="#155E75"/>
+<text x="1045.3" y="552" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">PGP Month 3</text>
+<line x1="751.8" y1="96" x2="751.8" y2="650" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="675.8" y="676" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#DC2626">Production Deployment: 31 Oct 2026</text>
+</svg>

@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="760" viewBox="0 0 1320 760">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#475569"/></marker></defs>
+<rect width="100%" height="100%" fill="#F8FAFC"/>
+<text x="42" y="46" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#0F172A">SYC High-Level Solution Architecture</text>
+<text x="42" y="73" font-family="Arial, sans-serif" font-size="13" fill="#475569">Production Azure architecture covering portal upgrade, agentic orchestration, approval, and D365 on-prem creation</text>
+<rect x="40" y="108" width="260" height="548" rx="12" fill="#EEF2FF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="58" y="138" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#334155">Users and Existing Estate</text>
+<rect x="340" y="108" width="590" height="548" rx="12" fill="#ECFEFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="358" y="138" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#334155">Azure Production Platform</text>
+<rect x="970" y="108" width="300" height="548" rx="12" fill="#FFF7ED" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="988" y="138" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#334155">Enterprise / On-Prem</text>
+<path d="M 260 210 L 340 210" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="347" y="203" font-family="Arial, sans-serif" font-size="10" fill="#475569">HTTPS</text>
+<path d="M 260 330 L 340 210" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="347" y="203" font-family="Arial, sans-serif" font-size="10" fill="#475569">API</text>
+<path d="M 260 450 L 310 450 L 310 210 L 340 210" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="317" y="203" font-family="Arial, sans-serif" font-size="10" fill="#475569">OIDC</text>
+<path d="M 560 210 L 610 210" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="617" y="203" font-family="Arial, sans-serif" font-size="10" fill="#475569">route</text>
+<path d="M 800 210 L 830 210 L 830 330 L 800 330" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="837" y="323" font-family="Arial, sans-serif" font-size="10" fill="#475569">orchestrate</text>
+<path d="M 610 330 L 560 330" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="567" y="323" font-family="Arial, sans-serif" font-size="10" fill="#475569">case data</text>
+<path d="M 700 390 L 700 455" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="707" y="448" font-family="Arial, sans-serif" font-size="10" fill="#475569">persist</text>
+<path d="M 800 330 L 830 330 L 830 455 L 800 455" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="837" y="448" font-family="Arial, sans-serif" font-size="10" fill="#475569">files + logs</text>
+<path d="M 560 510 L 610 510" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="617" y="503" font-family="Arial, sans-serif" font-size="10" fill="#475569">secrets</text>
+<path d="M 800 510 L 830 510 L 830 610 L 800 610" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="837" y="603" font-family="Arial, sans-serif" font-size="10" fill="#475569">telemetry</text>
+<path d="M 800 330 L 970 250" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="977" y="243" font-family="Arial, sans-serif" font-size="10" fill="#475569">approved case</text>
+<path d="M 970 375 L 800 330" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="807" y="323" font-family="Arial, sans-serif" font-size="10" fill="#475569">notify</text>
+<path d="M 970 520 L 820 610" fill="none" stroke="#475569" stroke-width="1.7" marker-end="url(#arrow)"/>
+<text x="827" y="603" font-family="Arial, sans-serif" font-size="10" fill="#475569">release gates</text>
+<rect x="80" y="175" width="180" height="70" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="94" y="200" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Case Officers</text>
+<text x="94" y="227" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Use upgraded SYC portal</text>
+<text x="94" y="242" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">for intake, review, and</text>
+<text x="94" y="257" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">approval actions.</text>
+<rect x="80" y="295" width="180" height="70" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="94" y="320" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Existing SYC Portal</text>
+<text x="94" y="347" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">JavaScript portal</text>
+<text x="94" y="362" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">upgraded for Azure-backed</text>
+<text x="94" y="377" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">production APIs.</text>
+<rect x="80" y="415" width="180" height="70" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="94" y="440" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Enterprise Identity</text>
+<text x="94" y="467" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Entra ID authentication</text>
+<text x="94" y="482" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">and RBAC group mapping.</text>
+<rect x="340" y="175" width="220" height="70" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="354" y="200" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">API Management</text>
+<text x="354" y="227" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Gateway, policies, JWT checks,</text>
+<text x="354" y="242" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">throttling, backend routing.</text>
+<rect x="610" y="175" width="190" height="70" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="624" y="200" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Portal + Backend</text>
+<text x="624" y="227" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Production app services for</text>
+<text x="624" y="242" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">UI, APIs, and case</text>
+<text x="624" y="257" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">operations.</text>
+<rect x="610" y="295" width="190" height="95" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="624" y="320" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Agent Orchestrator</text>
+<text x="624" y="347" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Session-scoped planner,</text>
+<text x="624" y="362" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">tool routing, action cards,</text>
+<text x="624" y="377" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">approval guardrails.</text>
+<rect x="340" y="295" width="220" height="95" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="354" y="320" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Azure PostgreSQL</text>
+<text x="354" y="347" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Case records, approvals, audit</text>
+<text x="354" y="362" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">events, tool runs, findings</text>
+<text x="354" y="377" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">metadata.</text>
+<rect x="610" y="455" width="190" height="70" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="624" y="480" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Storage Account</text>
+<text x="624" y="507" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Uploaded documents,</text>
+<text x="624" y="522" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">generated artifacts,</text>
+<text x="624" y="537" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">diagnostic logs.</text>
+<rect x="340" y="475" width="220" height="70" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="354" y="500" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Key Vault</text>
+<text x="354" y="527" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Secrets, certs, managed</text>
+<text x="354" y="542" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">identity access for each</text>
+<text x="354" y="557" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">environment.</text>
+<rect x="610" y="595" width="190" height="70" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="624" y="620" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Monitor + Alerts</text>
+<text x="624" y="647" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Operational dashboards,</text>
+<text x="624" y="662" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">alerts, release and runtime</text>
+<text x="624" y="677" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">diagnostics.</text>
+<rect x="970" y="210" width="220" height="80" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="984" y="235" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">D365 On-Prem</text>
+<text x="984" y="262" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Approved case insert, response</text>
+<text x="984" y="277" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">capture, retry and status</text>
+<text x="984" y="292" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">handling.</text>
+<rect x="970" y="340" width="220" height="70" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="984" y="365" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Notification Service</text>
+<text x="984" y="392" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Submission, approval, and</text>
+<text x="984" y="407" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">exception notifications.</text>
+<rect x="970" y="485" width="220" height="80" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="984" y="510" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">ShipHat / Azure DevOps</text>
+<text x="984" y="537" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">CI/CD promotion, approvals,</text>
+<text x="984" y="552" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">code scan gates.</text>
+</svg>

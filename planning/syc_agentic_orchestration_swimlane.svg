@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="820" viewBox="0 0 1320 820">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#475569"/></marker></defs>
+<rect width="100%" height="100%" fill="#F8FAFC"/>
+<text x="40" y="44" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#0F172A">Agentic Orchestration Swimlane</text>
+<text x="40" y="70" font-family="Arial, sans-serif" font-size="13" fill="#475569">Session-scoped assistant flow with explicit approval before D365 on-prem write-back</text>
+<rect x="40" y="100" width="1240" height="108" fill="#EFF6FF" stroke="#CBD5E1"/>
+<text x="56" y="132" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Case Officer</text>
+<rect x="40" y="208" width="1240" height="108" fill="#F0FDFA" stroke="#CBD5E1"/>
+<text x="56" y="240" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">SYC Portal</text>
+<rect x="40" y="316" width="1240" height="108" fill="#F5F3FF" stroke="#CBD5E1"/>
+<text x="56" y="348" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Agent Orchestrator</text>
+<rect x="40" y="424" width="1240" height="108" fill="#FFF7ED" stroke="#CBD5E1"/>
+<text x="56" y="456" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">AI + Tool Services</text>
+<rect x="40" y="532" width="1240" height="108" fill="#F8FAFC" stroke="#CBD5E1"/>
+<text x="56" y="564" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Data Stores</text>
+<rect x="40" y="640" width="1240" height="108" fill="#FFF1F2" stroke="#CBD5E1"/>
+<text x="56" y="672" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Approver + D365</text>
+<rect x="210" y="116" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="224" y="140" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Start Case</text>
+<text x="224" y="166" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Officer opens case</text>
+<text x="224" y="181" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">intake and uploads</text>
+<text x="224" y="196" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">supporting documents.</text>
+<rect x="430" y="224" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="444" y="248" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Submit Draft</text>
+<text x="444" y="274" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Portal sends case draft,</text>
+<text x="444" y="289" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">files, and session ID to</text>
+<text x="444" y="304" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">backend APIs.</text>
+<rect x="650" y="332" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="664" y="356" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Plan Work</text>
+<text x="664" y="382" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Orchestrator creates</text>
+<text x="664" y="397" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">run, selects tools, and</text>
+<text x="664" y="412" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">generates action cards.</text>
+<rect x="870" y="440" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="884" y="464" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Extract + Validate</text>
+<text x="884" y="490" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">OCR, model calls, rules,</text>
+<text x="884" y="505" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">and service lookups</text>
+<text x="884" y="520" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">produce findings.</text>
+<rect x="1090" y="548" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="1104" y="572" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Persist Metadata</text>
+<text x="1104" y="598" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Store case data,</text>
+<text x="1104" y="613" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">documents, hashes, tool</text>
+<text x="1104" y="628" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">runs, and findings.</text>
+<rect x="650" y="224" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="664" y="248" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Review Findings</text>
+<text x="664" y="274" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Portal shows extracted</text>
+<text x="664" y="289" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">values, exceptions, and</text>
+<text x="664" y="304" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">confidence signals.</text>
+<rect x="430" y="116" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="444" y="140" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Confirm Action</text>
+<text x="444" y="166" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Officer edits values and</text>
+<text x="444" y="181" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">submits approval</text>
+<text x="444" y="196" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">request.</text>
+<rect x="650" y="656" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="664" y="680" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Approve</text>
+<text x="664" y="706" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Approver records</text>
+<text x="664" y="721" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">decision; approved cases</text>
+<text x="664" y="736" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">continue to D365.</text>
+<rect x="910" y="656" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="924" y="680" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Create in D365</text>
+<text x="924" y="706" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Approved payload is</text>
+<text x="924" y="721" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">inserted through secured</text>
+<text x="924" y="736" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">on-prem integration.</text>
+<rect x="1090" y="224" width="170" height="76" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
+<text x="1104" y="248" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#0F172A">Show Result</text>
+<text x="1104" y="274" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">Portal displays D365</text>
+<text x="1104" y="289" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">reference, status, and</text>
+<text x="1104" y="304" font-family="Arial, sans-serif" font-size="11" font-weight="400" fill="#475569">audit trail.</text>
+<path d="M 380 154 L 405 154 L 405 262 L 430 262" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="411" y="256" font-family="Arial, sans-serif" font-size="10" fill="#475569">draft</text>
+<path d="M 600 262 L 625 262 L 625 370 L 650 370" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="631" y="364" font-family="Arial, sans-serif" font-size="10" fill="#475569">orchestrate</text>
+<path d="M 820 370 L 845 370 L 845 478 L 870 478" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="851" y="472" font-family="Arial, sans-serif" font-size="10" fill="#475569">tools</text>
+<path d="M 1040 478 L 1065 478 L 1065 586 L 1090 586" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="1071" y="580" font-family="Arial, sans-serif" font-size="10" fill="#475569">metadata</text>
+<path d="M 1090 602 L 1065 602 L 1065 278 L 820 278" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="1071" y="272" font-family="Arial, sans-serif" font-size="10" fill="#475569">results</text>
+<path d="M 650 246 L 625 246 L 625 154 L 600 154" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="631" y="148" font-family="Arial, sans-serif" font-size="10" fill="#475569">review</text>
+<path d="M 600 154 L 625 154 L 625 686 L 650 686" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="631" y="680" font-family="Arial, sans-serif" font-size="10" fill="#475569">approval</text>
+<path d="M 820 694 L 910 694" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="916" y="688" font-family="Arial, sans-serif" font-size="10" fill="#475569">approved</text>
+<path d="M 1080 694 L 1085 694 L 1085 262 L 1090 262" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="1091" y="256" font-family="Arial, sans-serif" font-size="10" fill="#475569">status</text>
+</svg>
