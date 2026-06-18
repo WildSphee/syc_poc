@@ -21,7 +21,7 @@ class Phase:
 
 START = date(2026, 7, 1)
 DEPLOYMENT = date(2026, 10, 31)
-PGP_END = date(2027, 1, 31)
+TIMELINE_END = date(2026, 11, 1)
 
 PHASES = [
     Phase("Initiation and Design", date(2026, 7, 1), date(2026, 7, 19), 0, "#315A9E", "scope, architecture, backlog", "Design"),
@@ -34,9 +34,6 @@ PHASES = [
     Phase("UAT Round 1", date(2026, 10, 1), date(2026, 10, 12), 7, "#059669", "defects and retest", "UAT 1"),
     Phase("UAT Round 2", date(2026, 10, 13), date(2026, 10, 23), 7, "#16A34A", "regression and sign-off", "UAT 2"),
     Phase("Production Deployment", date(2026, 10, 24), date(2026, 10, 31), 8, "#DC2626", "cutover and smoke test", "Deploy"),
-    Phase("PGP Month 1", date(2026, 11, 1), date(2026, 11, 30), 9, "#0891B2", "heightened monitoring", "PGP 1"),
-    Phase("PGP Month 2", date(2026, 12, 1), date(2026, 12, 31), 9, "#0E7490", "trend review", "PGP 2"),
-    Phase("PGP Month 3", date(2027, 1, 1), date(2027, 1, 31), 9, "#155E75", "closure readiness", "PGP 3"),
 ]
 
 MONTHS = [
@@ -44,17 +41,14 @@ MONTHS = [
     (date(2026, 8, 1), "Aug 2026"),
     (date(2026, 9, 1), "Sep 2026"),
     (date(2026, 10, 1), "Oct 2026"),
-    (date(2026, 11, 1), "Nov 2026"),
-    (date(2026, 12, 1), "Dec 2026"),
-    (date(2027, 1, 1), "Jan 2027"),
-    (date(2027, 2, 1), ""),
+    (date(2026, 11, 1), ""),
 ]
 
 
 def x_for(day: date) -> float:
     left = 190
     width = 990
-    total = (PGP_END - START).days + 1
+    total = (TIMELINE_END - START).days
     return left + ((day - START).days / total) * width
 
 
@@ -69,24 +63,26 @@ def esc(text: str) -> str:
 
 def svg() -> str:
     width = 1240
-    height = 720
+    height = 620
     top = 116
     lane_h = 48
+    chart_bottom = 552
+    deployment_label_y = 586
     lines: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" fill="#F8FAFC"/>',
         '<text x="48" y="50" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#0F172A">SYC Production Delivery Timeline</text>',
-        '<text x="48" y="78" font-family="Arial, sans-serif" font-size="14" fill="#475569">4 months from project start to production deployment, followed by 3 months PGP</text>',
+        '<text x="48" y="78" font-family="Arial, sans-serif" font-size="14" fill="#475569">4 months from project start to production deployment</text>',
         '<line x1="190" y1="100" x2="1180" y2="100" stroke="#CBD5E1" stroke-width="1"/>',
     ]
 
     for month, label in MONTHS:
         x = x_for(month)
-        lines.append(f'<line x1="{x:.1f}" y1="100" x2="{x:.1f}" y2="650" stroke="#E2E8F0" stroke-width="1"/>')
+        lines.append(f'<line x1="{x:.1f}" y1="100" x2="{x:.1f}" y2="{chart_bottom}" stroke="#E2E8F0" stroke-width="1"/>')
         if label:
             lines.append(f'<text x="{x + 8:.1f}" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">{esc(label)}</text>')
 
-    for i in range(10):
+    for i in range(9):
         y = top + i * lane_h
         fill = "#FFFFFF" if i % 2 == 0 else "#F1F5F9"
         lines.append(f'<rect x="48" y="{y - 24}" width="1132" height="{lane_h}" fill="{fill}" stroke="#E2E8F0"/>')
@@ -101,7 +97,6 @@ def svg() -> str:
         "SIT",
         "UAT",
         "Go-Live",
-        "PGP",
     ]
     for i, label in enumerate(lane_labels):
         y = top + i * lane_h + 5
@@ -121,8 +116,8 @@ def svg() -> str:
     dep_x = x_for(DEPLOYMENT)
     lines.extend(
         [
-            f'<line x1="{dep_x:.1f}" y1="96" x2="{dep_x:.1f}" y2="650" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>',
-            f'<text x="{dep_x - 76:.1f}" y="676" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#DC2626">Production Deployment: 31 Oct 2026</text>',
+            f'<line x1="{dep_x:.1f}" y1="96" x2="{dep_x:.1f}" y2="{chart_bottom}" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>',
+            f'<text x="1180" y="{deployment_label_y}" text-anchor="end" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#DC2626">Production Deployment: 31 Oct 2026</text>',
         ]
     )
     lines.append("</svg>")
