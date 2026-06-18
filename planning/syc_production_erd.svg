@@ -1,0 +1,197 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1540" height="1120" viewBox="0 0 1540 1120">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#475569"/></marker></defs>
+<rect width="100%" height="100%" fill="#F8FAFC"/>
+<text x="50" y="50" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#0F172A">SYC Production Data Model ERD</text>
+<text x="50" y="78" font-family="Arial, sans-serif" font-size="13" fill="#475569">Azure PostgreSQL conceptual schema for cases, approvals, agent metadata, document processing, D365 write-back, and audit events</text>
+<rect x="50" y="100" width="1440" height="960" rx="14" fill="#FFFFFF" stroke="#E2E8F0"/>
+<path d="M 310 218 L 430 218" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="435" y="199" width="162" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="441" y="212" font-family="Arial, sans-serif" font-size="10" fill="#475569">1 applicant -&gt; many cases</text>
+<path d="M 700 218 L 800 218" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="805" y="199" width="114" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="811" y="212" font-family="Arial, sans-serif" font-size="10" fill="#475569">1 case -&gt; parties</text>
+<path d="M 700 252 L 1170 252" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="1175" y="233" width="126" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="1181" y="246" font-family="Arial, sans-serif" font-size="10" fill="#475569">1 case -&gt; documents</text>
+<path d="M 565 323 L 565 405 L 205 405 L 205 445" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="210" y="386" width="126" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="216" y="399" font-family="Arial, sans-serif" font-size="10" fill="#475569">1 case -&gt; approvals</text>
+<path d="M 350 525 L 430 525" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="435" y="506" width="132" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="441" y="519" font-family="Arial, sans-serif" font-size="10" fill="#475569">request -&gt; decisions</text>
+<path d="M 700 286 L 760 286 L 760 525 L 800 525" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="765" y="506" width="132" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="771" y="519" font-family="Arial, sans-serif" font-size="10" fill="#475569">1 case -&gt; agent runs</text>
+<path d="M 1080 525 L 1170 525" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="1175" y="506" width="132" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="1181" y="519" font-family="Arial, sans-serif" font-size="10" fill="#475569">1 agent run -&gt; tools</text>
+<path d="M 1310 365 L 1310 445" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="1315" y="426" width="132" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="1321" y="439" font-family="Arial, sans-serif" font-size="10" fill="#475569">document -&gt; tool run</text>
+<path d="M 565 323 L 565 715 L 205 715 L 205 755" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="210" y="696" width="120" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="216" y="709" font-family="Arial, sans-serif" font-size="10" fill="#475569">1 case -&gt; findings</text>
+<path d="M 940 615 L 940 715 L 205 715 L 205 755" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="210" y="696" width="102" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="216" y="709" font-family="Arial, sans-serif" font-size="10" fill="#475569">run -&gt; findings</text>
+<path d="M 1310 365 L 1310 715 L 205 715 L 205 755" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="210" y="696" width="132" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="216" y="709" font-family="Arial, sans-serif" font-size="10" fill="#475569">document -&gt; findings</text>
+<path d="M 565 323 L 565 755" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="570" y="736" width="120" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="576" y="749" font-family="Arial, sans-serif" font-size="10" fill="#475569">1 case -&gt; sequence</text>
+<path d="M 940 615 L 940 715 L 575 715 L 575 755" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="580" y="696" width="102" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="586" y="709" font-family="Arial, sans-serif" font-size="10" fill="#475569">run -&gt; sequence</text>
+<path d="M 575 665 L 575 715 L 945 715 L 945 755" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="950" y="696" width="108" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="956" y="709" font-family="Arial, sans-serif" font-size="10" fill="#475569">approval -&gt; D365</text>
+<path d="M 565 323 L 565 700 L 945 700 L 945 755" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="950" y="681" width="138" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="956" y="694" font-family="Arial, sans-serif" font-size="10" fill="#475569">approved case -&gt; D365</text>
+<path d="M 310 248 L 370 248 L 370 1010 L 1170 1010 L 1170 855" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="375" y="991" width="96" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="381" y="1004" font-family="Arial, sans-serif" font-size="10" fill="#475569">actor -&gt; audit</text>
+<path d="M 700 300 L 740 300 L 740 1010 L 1170 1010 L 1170 835" fill="none" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<rect x="745" y="991" width="90" height="18" rx="4" fill="#F8FAFC" opacity="0.92"/>
+<text x="751" y="1004" font-family="Arial, sans-serif" font-size="10" fill="#475569">case -&gt; audit</text>
+<rect x="60" y="145" width="250" height="203" rx="8" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="60" y="145" width="250" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 60 175 H 310 V 183 H 60 Z" fill="#1E3A8A"/>
+<text x="74" y="170" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">app_users</text>
+<text x="74" y="207" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK user_id uuid</text>
+<text x="74" y="228" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">entra_object_id varchar</text>
+<text x="74" y="249" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">display_name varchar</text>
+<text x="74" y="270" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">email varchar</text>
+<text x="74" y="291" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">role_code varchar</text>
+<text x="74" y="312" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">is_active boolean</text>
+<text x="74" y="333" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">created_at timestamptz</text>
+<rect x="430" y="135" width="270" height="224" rx="8" fill="#EFF6FF" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="430" y="135" width="270" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 430 165 H 700 V 173 H 430 Z" fill="#1E3A8A"/>
+<text x="444" y="160" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">cases</text>
+<text x="444" y="197" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK case_id uuid</text>
+<text x="444" y="218" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_reference varchar</text>
+<text x="444" y="239" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">applicant_user_id uuid FK</text>
+<text x="444" y="260" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_status varchar</text>
+<text x="444" y="281" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">submission_channel varchar</text>
+<text x="444" y="302" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">d365_case_ref varchar</text>
+<text x="444" y="323" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">created_at timestamptz</text>
+<text x="444" y="344" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">updated_at timestamptz</text>
+<rect x="800" y="135" width="260" height="203" rx="8" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="800" y="135" width="260" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 800 165 H 1060 V 173 H 800 Z" fill="#1E3A8A"/>
+<text x="814" y="160" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">case_parties</text>
+<text x="814" y="197" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK party_id uuid</text>
+<text x="814" y="218" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_id uuid FK</text>
+<text x="814" y="239" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">party_type varchar</text>
+<text x="814" y="260" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">full_name varchar</text>
+<text x="814" y="281" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">identifier_hash varchar</text>
+<text x="814" y="302" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">contact_json jsonb</text>
+<text x="814" y="323" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">created_at timestamptz</text>
+<rect x="1170" y="135" width="280" height="224" rx="8" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="1170" y="135" width="280" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 1170 165 H 1450 V 173 H 1170 Z" fill="#1E3A8A"/>
+<text x="1184" y="160" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">case_documents</text>
+<text x="1184" y="197" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK document_id uuid</text>
+<text x="1184" y="218" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_id uuid FK</text>
+<text x="1184" y="239" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">storage_uri varchar</text>
+<text x="1184" y="260" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">document_type varchar</text>
+<text x="1184" y="281" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">file_hash varchar</text>
+<text x="1184" y="302" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">processing_status varchar</text>
+<text x="1184" y="323" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">uploaded_by uuid FK</text>
+<text x="1184" y="344" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">uploaded_at timestamptz</text>
+<rect x="60" y="445" width="290" height="203" rx="8" fill="#FFF7ED" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="60" y="445" width="290" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 60 475 H 350 V 483 H 60 Z" fill="#1E3A8A"/>
+<text x="74" y="470" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">approval_requests</text>
+<text x="74" y="507" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK approval_request_id uuid</text>
+<text x="74" y="528" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_id uuid FK</text>
+<text x="74" y="549" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">requested_by uuid FK</text>
+<text x="74" y="570" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">approver_group varchar</text>
+<text x="74" y="591" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">request_status varchar</text>
+<text x="74" y="612" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">request_comment text</text>
+<text x="74" y="633" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">created_at timestamptz</text>
+<rect x="430" y="445" width="290" height="182" rx="8" fill="#FFF7ED" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="430" y="445" width="290" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 430 475 H 720 V 483 H 430 Z" fill="#1E3A8A"/>
+<text x="444" y="470" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">approval_decisions</text>
+<text x="444" y="507" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK approval_decision_id uuid</text>
+<text x="444" y="528" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">approval_request_id uuid FK</text>
+<text x="444" y="549" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">decision_by uuid FK</text>
+<text x="444" y="570" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">decision varchar</text>
+<text x="444" y="591" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">decision_comment text</text>
+<text x="444" y="612" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">decided_at timestamptz</text>
+<rect x="800" y="445" width="280" height="203" rx="8" fill="#F5F3FF" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="800" y="445" width="280" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 800 475 H 1080 V 483 H 800 Z" fill="#1E3A8A"/>
+<text x="814" y="470" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">agent_runs</text>
+<text x="814" y="507" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK agent_run_id uuid</text>
+<text x="814" y="528" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_id uuid FK</text>
+<text x="814" y="549" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">session_hash varchar</text>
+<text x="814" y="570" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">run_status varchar</text>
+<text x="814" y="591" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">model_name varchar</text>
+<text x="814" y="612" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">started_at timestamptz</text>
+<text x="814" y="633" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">completed_at timestamptz</text>
+<rect x="1170" y="445" width="290" height="224" rx="8" fill="#F5F3FF" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="1170" y="445" width="290" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 1170 475 H 1460 V 483 H 1170 Z" fill="#1E3A8A"/>
+<text x="1184" y="470" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">tool_runs</text>
+<text x="1184" y="507" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK tool_run_id uuid</text>
+<text x="1184" y="528" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">agent_run_id uuid FK</text>
+<text x="1184" y="549" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">document_id uuid FK nullable</text>
+<text x="1184" y="570" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">tool_name varchar</text>
+<text x="1184" y="591" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">input_hash varchar</text>
+<text x="1184" y="612" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">output_hash varchar</text>
+<text x="1184" y="633" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">tool_status varchar</text>
+<text x="1184" y="654" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">started_at timestamptz</text>
+<rect x="60" y="755" width="290" height="224" rx="8" fill="#ECFEFF" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="60" y="755" width="290" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 60 785 H 350 V 793 H 60 Z" fill="#1E3A8A"/>
+<text x="74" y="780" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">findings</text>
+<text x="74" y="817" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK finding_id uuid</text>
+<text x="74" y="838" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_id uuid FK</text>
+<text x="74" y="859" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">agent_run_id uuid FK</text>
+<text x="74" y="880" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">document_id uuid FK nullable</text>
+<text x="74" y="901" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">field_name varchar</text>
+<text x="74" y="922" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">field_value_json jsonb</text>
+<text x="74" y="943" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">confidence numeric</text>
+<text x="74" y="964" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">finding_status varchar</text>
+<rect x="430" y="755" width="290" height="203" rx="8" fill="#ECFEFF" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="430" y="755" width="290" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 430 785 H 720 V 793 H 430 Z" fill="#1E3A8A"/>
+<text x="444" y="780" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">sequence_records</text>
+<text x="444" y="817" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK sequence_record_id uuid</text>
+<text x="444" y="838" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_id uuid FK</text>
+<text x="444" y="859" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">agent_run_id uuid FK nullable</text>
+<text x="444" y="880" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">sequence_no integer</text>
+<text x="444" y="901" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">event_type varchar</text>
+<text x="444" y="922" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">payload_hash varchar</text>
+<text x="444" y="943" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">created_at timestamptz</text>
+<rect x="800" y="755" width="290" height="224" rx="8" fill="#FFE4E6" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="800" y="755" width="290" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 800 785 H 1090 V 793 H 800 Z" fill="#1E3A8A"/>
+<text x="814" y="780" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">d365_writebacks</text>
+<text x="814" y="817" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK writeback_id uuid</text>
+<text x="814" y="838" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_id uuid FK</text>
+<text x="814" y="859" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">approval_decision_id uuid FK</text>
+<text x="814" y="880" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">d365_case_id varchar</text>
+<text x="814" y="901" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">writeback_status varchar</text>
+<text x="814" y="922" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">retry_count integer</text>
+<text x="814" y="943" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">last_error text</text>
+<text x="814" y="964" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">created_at timestamptz</text>
+<rect x="1170" y="755" width="290" height="224" rx="8" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1.2"/>
+<rect x="1170" y="755" width="290" height="38" rx="8" fill="#1E3A8A"/>
+<path d="M 1170 785 H 1460 V 793 H 1170 Z" fill="#1E3A8A"/>
+<text x="1184" y="780" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF">audit_events</text>
+<text x="1184" y="817" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">PK audit_event_id uuid</text>
+<text x="1184" y="838" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">case_id uuid FK nullable</text>
+<text x="1184" y="859" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">actor_user_id uuid FK nullable</text>
+<text x="1184" y="880" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">event_type varchar</text>
+<text x="1184" y="901" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">entity_name varchar</text>
+<text x="1184" y="922" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">entity_id uuid</text>
+<text x="1184" y="943" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">correlation_id varchar</text>
+<text x="1184" y="964" font-family="Arial, sans-serif" font-size="12" font-weight="400" fill="#334155">created_at timestamptz</text>
+<rect x="60" y="1080" width="12" height="12" rx="2" fill="#1E3A8A"/>
+<text x="82" y="1091" font-family="Arial, sans-serif" font-size="12" fill="#475569">PK = primary key, FK = foreign key. Hash fields avoid storing raw assistant conversation or sensitive source values in metadata tables.</text>
+</svg>

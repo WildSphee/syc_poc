@@ -23,19 +23,51 @@ export function hasApiKey() {
 
 async function callResponses(body) {
   if (!API_KEY) throw new Error('Missing VITE_OPENAI_API_KEY');
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${API_KEY}`,
-    },
-    body: JSON.stringify({ model: MODEL, ...body }),
-  });
+  let res;
+  try {
+    res = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${API_KEY}`,
+      },
+      body: JSON.stringify({ model: MODEL, ...body }),
+    });
+  } catch (err) {
+    console.error('[OpenAI] fetch failed', {
+      url: API_URL,
+      model: MODEL,
+      message: err?.message || String(err),
+      error: err,
+    });
+    throw err;
+  }
+
   if (!res.ok) {
     const errText = await res.text().catch(() => res.statusText);
+    console.error('[OpenAI] API request failed', {
+      url: API_URL,
+      model: MODEL,
+      status: res.status,
+      statusText: res.statusText,
+      body: errText,
+    });
     throw new Error(`OpenAI ${res.status}: ${errText}`);
   }
-  return res.json();
+
+  try {
+    return await res.json();
+  } catch (err) {
+    console.error('[OpenAI] response JSON parse failed', {
+      url: API_URL,
+      model: MODEL,
+      status: res.status,
+      statusText: res.statusText,
+      message: err?.message || String(err),
+      error: err,
+    });
+    throw err;
+  }
 }
 
 // Pull plain text out of a Responses-API result across shape variations.
