@@ -1,8 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-import TopBar from './components/TopBar.jsx';
+import GovHeader from './components/GovHeader.jsx';
+import OsStepBar from './components/OsStepBar.jsx';
+import SectionSidebar from './components/SectionSidebar.jsx';
 import OsForm from './components/OsForm.jsx';
 import ChatPanel from './components/ChatPanel.jsx';
 import ResumeBanner from './components/ResumeBanner.jsx';
+import DashboardScreen from './screens/DashboardScreen.jsx';
+import DivorceScreen from './screens/DivorceScreen.jsx';
+import EServicesScreen from './screens/EServicesScreen.jsx';
+import FilingScreen from './screens/FilingScreen.jsx';
 import { createEngine } from './state/createEngine.js';
 import { loadSession, clearSession } from './lib/session.js';
 
@@ -15,32 +21,43 @@ export default function App() {
   const [, forceTick] = useState(0);
   const [lang, setLang] = useState(engine.lang);
   const [saved, setSaved] = useState(null);
-  const [started, setStarted] = useState(false);
+  // Lead-up navigation: dashboard → divorce → eservices → filing → demo.
+  const [route, setRoute] = useState('dashboard');
+  const startedRef = useRef(false);
 
   useEffect(() => {
     engine.onChange = () => {
       setLang(engine.lang);
       forceTick((n) => n + 1);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Start (or offer to resume) the filing flow the first time we enter the demo.
+  function enterDemo() {
+    setRoute('demo');
+    if (startedRef.current) return;
+    startedRef.current = true;
     const existing = loadSession();
     if (existing && existing.resumeAt) {
       setSaved(existing);
     } else {
       engine.start();
-      setStarted(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }
+
+  function navigate(to) {
+    if (to === 'demo') enterDemo();
+    else setRoute(to);
+  }
 
   function resume() {
     setSaved(null);
-    setStarted(true);
     engine.restore(loadSession());
   }
   function startNew() {
     clearSession();
     setSaved(null);
-    setStarted(true);
     engine.messages = [];
     engine.start();
   }
@@ -57,25 +74,36 @@ export default function App() {
     engine.talakData = []; engine.numTalakSessions = 0; engine.witnessState = {};
     engine.messages = [];
     setSaved(null);
-    setStarted(true);
     engine.start();
   }
 
   return (
     <>
-      <TopBar lang={lang} step={engine.step} onSetLang={onSetLang} />
-      {saved && (
-        <ResumeBanner lang={lang} saved={saved} onResume={resume} onStartNew={startNew} />
+      <GovHeader route={route} onNav={navigate} />
+
+      {route === 'dashboard' && <DashboardScreen onNav={navigate} />}
+      {route === 'divorce' && <DivorceScreen onNav={navigate} />}
+      {route === 'eservices' && <EServicesScreen onNav={navigate} />}
+      {route === 'filing' && <FilingScreen onNav={navigate} />}
+
+      {route === 'demo' && (
+        <>
+          <OsStepBar lang={lang} onSetLang={onSetLang} />
+          {saved && (
+            <ResumeBanner lang={lang} saved={saved} onResume={resume} onStartNew={startNew} />
+          )}
+          <div className="main-layout">
+            <SectionSidebar form={engine.form} />
+            <OsForm lang={lang} form={engine.form} engine={engine} />
+            <ChatPanel
+              engine={engine}
+              lang={lang}
+              messages={engine.messages}
+              progressPct={engine.form.progressPct}
+            />
+          </div>
+        </>
       )}
-      <div className="main-layout">
-        <OsForm lang={lang} form={engine.form} engine={engine} />
-        <ChatPanel
-          engine={engine}
-          lang={lang}
-          messages={engine.messages}
-          progressPct={engine.form.progressPct}
-        />
-      </div>
     </>
   );
 }
