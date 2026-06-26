@@ -1,5 +1,5 @@
-// Thin client for the OpenAI Responses API (gpt-5.5), called directly from the
-// browser. NOTE: the key is bundled into the client — local POC use only.
+// Thin client for the OpenAI Responses API (gpt-5.5). In dev this calls the
+// Vite same-origin proxy so the browser does not preflight api.openai.com.
 //
 // All prompt text lives in src/prompt.jsx; this module only handles transport.
 
@@ -13,24 +13,21 @@ import {
   sectionReviewSchema,
 } from '../prompt.jsx';
 
-const API_URL = 'https://api.openai.com/v1/responses';
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const API_URL = import.meta.env.VITE_OPENAI_PROXY_URL || '/api/openai/responses';
 const MODEL = import.meta.env.VITE_OPENAI_MODEL || 'gpt-5.5';
 
 export function hasApiKey() {
-  return Boolean(API_KEY);
+  return true;
 }
 
 async function callResponses(body) {
-  if (!API_KEY) throw new Error('Missing VITE_OPENAI_API_KEY');
   let res;
   try {
+    const headers = { 'Content-Type': 'application/json' };
+
     res = await fetch(API_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${API_KEY}`,
-      },
+      headers,
       body: JSON.stringify({ model: MODEL, ...body }),
     });
   } catch (err) {
