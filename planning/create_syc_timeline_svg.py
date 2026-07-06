@@ -19,29 +19,29 @@ class Phase:
     short: str
 
 
-START = date(2026, 7, 1)
-DEPLOYMENT = date(2026, 10, 31)
-TIMELINE_END = date(2026, 11, 1)
+START = date(2026, 8, 1)
+DEPLOYMENT = date(2026, 11, 30)
+TIMELINE_END = date(2026, 12, 1)
 
 PHASES = [
-    Phase("Initiation and Design", date(2026, 7, 1), date(2026, 7, 19), 0, "#315A9E", "scope, architecture, backlog", "Design"),
-    Phase("Azure Foundation", date(2026, 7, 8), date(2026, 8, 7), 1, "#0F766E", "DEV/UAT/PROD, RBAC, Key Vault, APIM", "Azure"),
-    Phase("Portal Upgrade", date(2026, 7, 22), date(2026, 9, 4), 2, "#B45309", "SYC JavaScript portal and intake UX", "Portal"),
-    Phase("Agentic Orchestration", date(2026, 7, 29), date(2026, 9, 18), 3, "#7C3AED", "tool routing, approvals, metadata", "Agent"),
-    Phase("Integration Build", date(2026, 8, 12), date(2026, 9, 25), 4, "#BE123C", "D365 on-prem and existing services", "Integration"),
-    Phase("CI/CD and Code Scan", date(2026, 7, 15), date(2026, 9, 11), 5, "#2563EB", "ShipHat/Azure DevOps, scan gates", "CI/CD"),
-    Phase("SIT and Hardening", date(2026, 9, 7), date(2026, 9, 30), 6, "#64748B", "end-to-end fixes and runbooks", "SIT"),
-    Phase("UAT Round 1", date(2026, 10, 1), date(2026, 10, 12), 7, "#059669", "defects and retest", "UAT 1"),
-    Phase("UAT Round 2", date(2026, 10, 13), date(2026, 10, 23), 7, "#16A34A", "regression and sign-off", "UAT 2"),
-    Phase("Production Deployment", date(2026, 10, 24), date(2026, 10, 31), 8, "#DC2626", "cutover and smoke test", "Deploy"),
+    Phase("Initiation and Design", date(2026, 8, 1), date(2026, 8, 19), 0, "#315A9E", "scope, architecture, backlog", "Design"),
+    Phase("Azure Foundation", date(2026, 8, 8), date(2026, 9, 7), 1, "#0F766E", "DEV/UAT/PROD, RBAC, Key Vault, APIM", "Azure"),
+    Phase("Portal Upgrade", date(2026, 8, 22), date(2026, 10, 4), 2, "#B45309", "SYC JavaScript portal and intake UX", "Portal"),
+    Phase("Agentic Orchestration", date(2026, 8, 29), date(2026, 10, 18), 3, "#7C3AED", "tool routing, approvals, metadata", "Agent"),
+    Phase("Integration Build", date(2026, 9, 12), date(2026, 10, 25), 4, "#BE123C", "D365 on-prem and existing services", "Integration"),
+    Phase("CI/CD and Code Scan", date(2026, 8, 15), date(2026, 10, 11), 5, "#2563EB", "ShipHat/Azure DevOps, scan gates", "CI/CD"),
+    Phase("SIT and Hardening", date(2026, 10, 7), date(2026, 10, 30), 6, "#64748B", "end-to-end fixes and runbooks", "SIT"),
+    Phase("UAT Round 1", date(2026, 11, 1), date(2026, 11, 12), 7, "#059669", "defects and retest", "UAT 1"),
+    Phase("UAT Round 2", date(2026, 11, 13), date(2026, 11, 23), 7, "#16A34A", "regression and sign-off", "UAT 2"),
+    Phase("Production Deployment", date(2026, 11, 24), date(2026, 11, 30), 8, "#DC2626", "cutover and smoke test", "Deploy"),
 ]
 
 MONTHS = [
-    (date(2026, 7, 1), "Jul 2026"),
     (date(2026, 8, 1), "Aug 2026"),
     (date(2026, 9, 1), "Sep 2026"),
     (date(2026, 10, 1), "Oct 2026"),
-    (date(2026, 11, 1), ""),
+    (date(2026, 11, 1), "Nov 2026"),
+    (date(2026, 12, 1), ""),
 ]
 
 
@@ -109,15 +109,15 @@ def svg() -> str:
         w = max(24, x2 - x1)
         lines.append(f'<rect x="{x1:.1f}" y="{y}" width="{w:.1f}" height="28" rx="5" fill="{phase.color}"/>')
         label = phase.name if w >= 130 else phase.short
-        text_x = x1 + 8 if w >= 58 else x1 + w + 5
-        text_color = "#FFFFFF" if w >= 58 else phase.color
+        text_x = x1 + 8 if w >= 50 else x1 + w + 5
+        text_color = "#FFFFFF" if w >= 50 else phase.color
         lines.append(f'<text x="{text_x:.1f}" y="{y + 18}" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="{text_color}">{esc(label)}</text>')
 
     dep_x = x_for(DEPLOYMENT)
     lines.extend(
         [
             f'<line x1="{dep_x:.1f}" y1="96" x2="{dep_x:.1f}" y2="{chart_bottom}" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>',
-            f'<text x="1180" y="{deployment_label_y}" text-anchor="end" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#DC2626">Production Deployment: 31 Oct 2026</text>',
+            f'<text x="1180" y="{deployment_label_y}" text-anchor="end" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#DC2626">Production Deployment: {DEPLOYMENT.day} {DEPLOYMENT:%b %Y}</text>',
         ]
     )
     lines.append("</svg>")

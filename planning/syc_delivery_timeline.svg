@@ -4,13 +4,13 @@
 <text x="48" y="78" font-family="Arial, sans-serif" font-size="14" fill="#475569">4 months from project start to production deployment</text>
 <line x1="190" y1="100" x2="1180" y2="100" stroke="#CBD5E1" stroke-width="1"/>
 <line x1="190.0" y1="100" x2="190.0" y2="552" stroke="#E2E8F0" stroke-width="1"/>
-<text x="198.0" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Jul 2026</text>
-<line x1="439.5" y1="100" x2="439.5" y2="552" stroke="#E2E8F0" stroke-width="1"/>
-<text x="447.5" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Aug 2026</text>
-<line x1="689.0" y1="100" x2="689.0" y2="552" stroke="#E2E8F0" stroke-width="1"/>
-<text x="697.0" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Sep 2026</text>
-<line x1="930.5" y1="100" x2="930.5" y2="552" stroke="#E2E8F0" stroke-width="1"/>
-<text x="938.5" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Oct 2026</text>
+<text x="198.0" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Aug 2026</text>
+<line x1="441.6" y1="100" x2="441.6" y2="552" stroke="#E2E8F0" stroke-width="1"/>
+<text x="449.6" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Sep 2026</text>
+<line x1="685.0" y1="100" x2="685.0" y2="552" stroke="#E2E8F0" stroke-width="1"/>
+<text x="693.0" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Oct 2026</text>
+<line x1="936.6" y1="100" x2="936.6" y2="552" stroke="#E2E8F0" stroke-width="1"/>
+<text x="944.6" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Nov 2026</text>
 <line x1="1180.0" y1="100" x2="1180.0" y2="552" stroke="#E2E8F0" stroke-width="1"/>
 <rect x="48" y="92" width="1132" height="48" fill="#FFFFFF" stroke="#E2E8F0"/>
 <rect x="48" y="140" width="1132" height="48" fill="#F1F5F9" stroke="#E2E8F0"/>
@@ -30,26 +30,26 @@
 <text x="64" y="409" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">SIT</text>
 <text x="64" y="457" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">UAT</text>
 <text x="64" y="505" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Go-Live</text>
-<rect x="190.0" y="102" width="152.9" height="28" rx="5" fill="#315A9E"/>
+<rect x="190.0" y="102" width="154.2" height="28" rx="5" fill="#315A9E"/>
 <text x="198.0" y="120" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Initiation and Design</text>
-<rect x="246.3" y="150" width="249.5" height="28" rx="5" fill="#0F766E"/>
-<text x="254.3" y="168" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Azure Foundation</text>
-<rect x="359.0" y="198" width="362.2" height="28" rx="5" fill="#B45309"/>
-<text x="367.0" y="216" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Portal Upgrade</text>
-<rect x="415.4" y="246" width="418.5" height="28" rx="5" fill="#7C3AED"/>
-<text x="423.4" y="264" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Agentic Orchestration</text>
-<rect x="528.0" y="294" width="362.2" height="28" rx="5" fill="#BE123C"/>
-<text x="536.0" y="312" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Integration Build</text>
-<rect x="302.7" y="342" width="474.9" height="28" rx="5" fill="#2563EB"/>
-<text x="310.7" y="360" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">CI/CD and Code Scan</text>
-<rect x="737.3" y="390" width="193.2" height="28" rx="5" fill="#64748B"/>
-<text x="745.3" y="408" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">SIT and Hardening</text>
-<rect x="930.5" y="438" width="96.6" height="28" rx="5" fill="#059669"/>
-<text x="938.5" y="456" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">UAT 1</text>
-<rect x="1027.1" y="438" width="88.5" height="28" rx="5" fill="#16A34A"/>
-<text x="1035.1" y="456" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">UAT 2</text>
-<rect x="1115.6" y="486" width="64.4" height="28" rx="5" fill="#DC2626"/>
-<text x="1123.6" y="504" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Deploy</text>
-<line x1="1172.0" y1="96" x2="1172.0" y2="552" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>
-<text x="1180" y="586" text-anchor="end" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#DC2626">Production Deployment: 31 Oct 2026</text>
+<rect x="246.8" y="150" width="251.6" height="28" rx="5" fill="#0F766E"/>
+<text x="254.8" y="168" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Azure Foundation</text>
+<rect x="360.4" y="198" width="357.0" height="28" rx="5" fill="#B45309"/>
+<text x="368.4" y="216" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Portal Upgrade</text>
+<rect x="417.2" y="246" width="413.9" height="28" rx="5" fill="#7C3AED"/>
+<text x="425.2" y="264" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Agentic Orchestration</text>
+<rect x="530.8" y="294" width="357.0" height="28" rx="5" fill="#BE123C"/>
+<text x="538.8" y="312" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Integration Build</text>
+<rect x="303.6" y="342" width="470.7" height="28" rx="5" fill="#2563EB"/>
+<text x="311.6" y="360" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">CI/CD and Code Scan</text>
+<rect x="733.7" y="390" width="194.8" height="28" rx="5" fill="#64748B"/>
+<text x="741.7" y="408" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">SIT and Hardening</text>
+<rect x="936.6" y="438" width="97.4" height="28" rx="5" fill="#059669"/>
+<text x="944.6" y="456" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">UAT 1</text>
+<rect x="1033.9" y="438" width="89.3" height="28" rx="5" fill="#16A34A"/>
+<text x="1041.9" y="456" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">UAT 2</text>
+<rect x="1123.2" y="486" width="56.8" height="28" rx="5" fill="#DC2626"/>
+<text x="1131.2" y="504" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Deploy</text>
+<line x1="1171.9" y1="96" x2="1171.9" y2="552" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="1180" y="586" text-anchor="end" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#DC2626">Production Deployment: 30 Nov 2026</text>
 </svg>
