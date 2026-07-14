@@ -15,25 +15,39 @@ class Phase:
     end: date
     lane: int
     color: str
-    note: str
     short: str
 
 
-START = date(2026, 8, 1)
-DEPLOYMENT = date(2026, 11, 30)
-TIMELINE_END = date(2026, 12, 1)
+@dataclass(frozen=True)
+class Milestone:
+    name: str
+    day: date
+    row: int
+    color: str
+    anchor: str = "middle"
 
+
+START = date(2026, 8, 1)
+COMPLETION = date(2026, 11, 30)
+TIMELINE_END = date(2027, 3, 1)
+
+# A user-facing view: delivery work is intentionally grouped rather than shown as
+# separate technical workstreams.  PGP starts only after production completion.
 PHASES = [
-    Phase("Initiation and Design", date(2026, 8, 1), date(2026, 8, 19), 0, "#315A9E", "scope, architecture, backlog", "Design"),
-    Phase("Azure Foundation", date(2026, 8, 8), date(2026, 9, 7), 1, "#0F766E", "DEV/UAT/PROD, RBAC, Key Vault, APIM", "Azure"),
-    Phase("Portal Upgrade", date(2026, 8, 22), date(2026, 10, 4), 2, "#B45309", "SYC JavaScript portal and intake UX", "Portal"),
-    Phase("Agentic Orchestration", date(2026, 8, 29), date(2026, 10, 18), 3, "#7C3AED", "tool routing, approvals, metadata", "Agent"),
-    Phase("Integration Build", date(2026, 9, 12), date(2026, 10, 25), 4, "#BE123C", "D365 on-prem and existing services", "Integration"),
-    Phase("CI/CD and Code Scan", date(2026, 8, 15), date(2026, 10, 11), 5, "#2563EB", "ShipHat/Azure DevOps, scan gates", "CI/CD"),
-    Phase("SIT and Hardening", date(2026, 10, 7), date(2026, 10, 30), 6, "#64748B", "end-to-end fixes and runbooks", "SIT"),
-    Phase("UAT Round 1", date(2026, 11, 1), date(2026, 11, 12), 7, "#059669", "defects and retest", "UAT 1"),
-    Phase("UAT Round 2", date(2026, 11, 13), date(2026, 11, 23), 7, "#16A34A", "regression and sign-off", "UAT 2"),
-    Phase("Production Deployment", date(2026, 11, 24), date(2026, 11, 30), 8, "#DC2626", "cutover and smoke test", "Deploy"),
+    Phase("Planning", date(2026, 8, 1), date(2026, 8, 21), 0, "#315A9E", "Planning"),
+    Phase("Set-up", date(2026, 8, 8), date(2026, 9, 7), 1, "#0F766E", "Set-up"),
+    Phase("Development", date(2026, 8, 22), date(2026, 10, 25), 2, "#7C3AED", "Development"),
+    Phase("User release", date(2026, 11, 1), date(2026, 11, 30), 3, "#DC2626", "Release"),
+    Phase("Optional PGP (3 months)", date(2026, 12, 1), date(2027, 2, 28), 4, "#059669", "Optional PGP"),
+]
+
+MILESTONES = [
+    Milestone("SYC POC start", START, 0, "#315A9E", "start"),
+    Milestone("Planning complete", date(2026, 8, 21), 1, "#315A9E"),
+    Milestone("Set-up complete", date(2026, 9, 7), 0, "#0F766E"),
+    Milestone("Development complete", date(2026, 10, 25), 1, "#7C3AED"),
+    Milestone("Production completion", COMPLETION, 0, "#DC2626"),
+    Milestone("Optional PGP ends", date(2027, 2, 28), 1, "#059669", "end"),
 ]
 
 MONTHS = [
@@ -41,13 +55,16 @@ MONTHS = [
     (date(2026, 9, 1), "Sep 2026"),
     (date(2026, 10, 1), "Oct 2026"),
     (date(2026, 11, 1), "Nov 2026"),
-    (date(2026, 12, 1), ""),
+    (date(2026, 12, 1), "Dec 2026"),
+    (date(2027, 1, 1), "Jan 2027"),
+    (date(2027, 2, 1), "Feb 2027"),
+    (date(2027, 3, 1), ""),
 ]
 
 
 def x_for(day: date) -> float:
-    left = 190
-    width = 990
+    left = 220
+    width = 960
     total = (TIMELINE_END - START).days
     return left + ((day - START).days / total) * width
 
@@ -63,64 +80,58 @@ def esc(text: str) -> str:
 
 def svg() -> str:
     width = 1240
-    height = 620
-    top = 116
-    lane_h = 48
-    chart_bottom = 552
-    deployment_label_y = 586
+    height = 660
+    top = 142
+    lane_h = 54
+    chart_bottom = top + lane_h * 5
+    milestone_y = chart_bottom + 56
     lines: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" fill="#F8FAFC"/>',
-        '<text x="48" y="50" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#0F172A">SYC Production Delivery Timeline</text>',
-        '<text x="48" y="78" font-family="Arial, sans-serif" font-size="14" fill="#475569">4 months from project start to production deployment</text>',
-        '<line x1="190" y1="100" x2="1180" y2="100" stroke="#CBD5E1" stroke-width="1"/>',
+        '<text x="48" y="50" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#0F172A">SYC User Delivery Timeline</text>',
+        '<text x="48" y="77" font-family="Arial, sans-serif" font-size="14" fill="#475569">Production delivery completes in November 2026, followed by an optional 3-month PGP period.</text>',
+        '<text x="48" y="105" font-family="Arial, sans-serif" font-size="12" fill="#64748B">Development combines the portal, agentic AI, integrations and DevOps workstreams.</text>',
+        '<line x1="220" y1="124" x2="1180" y2="124" stroke="#CBD5E1" stroke-width="1"/>',
     ]
 
     for month, label in MONTHS:
         x = x_for(month)
-        lines.append(f'<line x1="{x:.1f}" y1="100" x2="{x:.1f}" y2="{chart_bottom}" stroke="#E2E8F0" stroke-width="1"/>')
+        lines.append(f'<line x1="{x:.1f}" y1="124" x2="{x:.1f}" y2="{chart_bottom}" stroke="#E2E8F0" stroke-width="1"/>')
         if label:
-            lines.append(f'<text x="{x + 8:.1f}" y="92" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">{esc(label)}</text>')
+            lines.append(f'<text x="{x + 7:.1f}" y="117" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">{esc(label)}</text>')
 
-    for i in range(9):
+    lane_labels = ["Planning", "Set-up", "Development", "User release", "Optional PGP"]
+    for i, label in enumerate(lane_labels):
         y = top + i * lane_h
         fill = "#FFFFFF" if i % 2 == 0 else "#F1F5F9"
-        lines.append(f'<rect x="48" y="{y - 24}" width="1132" height="{lane_h}" fill="{fill}" stroke="#E2E8F0"/>')
-
-    lane_labels = [
-        "Planning",
-        "Azure Infra",
-        "Frontend",
-        "Agentic AI",
-        "Integrations",
-        "DevOps",
-        "SIT",
-        "UAT",
-        "Go-Live",
-    ]
-    for i, label in enumerate(lane_labels):
-        y = top + i * lane_h + 5
-        lines.append(f'<text x="64" y="{y}" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">{esc(label)}</text>')
+        lines.append(f'<rect x="48" y="{y - 25}" width="1132" height="{lane_h}" fill="{fill}" stroke="#E2E8F0"/>')
+        lines.append(f'<text x="64" y="{y + 5}" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">{esc(label)}</text>')
 
     for phase in PHASES:
         x1 = x_for(phase.start)
         x2 = x_for(phase.end + timedelta(days=1))
-        y = top + phase.lane * lane_h - 14
-        w = max(24, x2 - x1)
-        lines.append(f'<rect x="{x1:.1f}" y="{y}" width="{w:.1f}" height="28" rx="5" fill="{phase.color}"/>')
-        label = phase.name if w >= 130 else phase.short
-        text_x = x1 + 8 if w >= 50 else x1 + w + 5
-        text_color = "#FFFFFF" if w >= 50 else phase.color
-        lines.append(f'<text x="{text_x:.1f}" y="{y + 18}" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="{text_color}">{esc(label)}</text>')
+        y = top + phase.lane * lane_h - 16
+        bar_width = max(28, x2 - x1)
+        lines.append(f'<rect x="{x1:.1f}" y="{y}" width="{bar_width:.1f}" height="31" rx="5" fill="{phase.color}"/>')
+        lines.append(f'<text x="{x1 + 9:.1f}" y="{y + 20}" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">{esc(phase.name)}</text>')
 
-    dep_x = x_for(DEPLOYMENT)
-    lines.extend(
-        [
-            f'<line x1="{dep_x:.1f}" y1="96" x2="{dep_x:.1f}" y2="{chart_bottom}" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>',
-            f'<text x="1180" y="{deployment_label_y}" text-anchor="end" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#DC2626">Production Deployment: {DEPLOYMENT.day} {DEPLOYMENT:%b %Y}</text>',
-        ]
-    )
-    lines.append("</svg>")
+    for milestone in MILESTONES:
+        x = x_for(milestone.day)
+        y = milestone_y + milestone.row * 25
+        label_x = x if milestone.anchor == "middle" else (x + 5 if milestone.anchor == "start" else x - 5)
+        lines.extend([
+            f'<line x1="{x:.1f}" y1="{chart_bottom}" x2="{x:.1f}" y2="{y - 13}" stroke="{milestone.color}" stroke-width="1.5"/>',
+            f'<circle cx="{x:.1f}" cy="{chart_bottom}" r="4" fill="{milestone.color}"/>',
+            f'<text x="{label_x:.1f}" y="{y}" text-anchor="{milestone.anchor}" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="{milestone.color}">{esc(milestone.name)}</text>',
+        ])
+
+    completion_x = x_for(COMPLETION)
+    lines.extend([
+        f'<line x1="{completion_x:.1f}" y1="120" x2="{completion_x:.1f}" y2="{chart_bottom}" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>',
+        f'<text x="{completion_x - 7:.1f}" y="{chart_bottom - 12}" text-anchor="end" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#DC2626">Completion: 30 Nov 2026</text>',
+        '<text x="48" y="638" font-family="Arial, sans-serif" font-size="12" fill="#475569">PGP is optional post-production support and stabilisation; it does not extend the production delivery completion date.</text>',
+        '</svg>',
+    ])
     return "\n".join(lines) + "\n"
 
 
