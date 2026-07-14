@@ -1,21 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1240" height="660" viewBox="0 0 1240 660">
-<rect width="100%" height="100%" fill="#F8FAFC"/>
+<rect width="100%" height="100%" fill="#FFFFFF"/>
 <text x="48" y="50" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#0F172A">SYC User Delivery Timeline</text>
 <line x1="220" y1="122" x2="1180" y2="122" stroke="#CBD5E1" stroke-width="1"/>
 <line x1="220.0" y1="82" x2="220.0" y2="424" stroke="#E2E8F0" stroke-width="1"/>
 <text x="227.0" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Aug 2026</text>
-<line x1="360.4" y1="82" x2="360.4" y2="424" stroke="#E2E8F0" stroke-width="1"/>
-<text x="367.4" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Sep 2026</text>
-<line x1="496.2" y1="82" x2="496.2" y2="424" stroke="#E2E8F0" stroke-width="1"/>
-<text x="503.2" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Oct 2026</text>
-<line x1="636.6" y1="82" x2="636.6" y2="424" stroke="#E2E8F0" stroke-width="1"/>
-<text x="643.6" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Nov 2026</text>
-<line x1="772.5" y1="82" x2="772.5" y2="424" stroke="#E2E8F0" stroke-width="1"/>
-<text x="779.5" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Dec 2026</text>
-<line x1="912.8" y1="82" x2="912.8" y2="424" stroke="#E2E8F0" stroke-width="1"/>
-<text x="919.8" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Jan 2027</text>
-<line x1="1053.2" y1="82" x2="1053.2" y2="424" stroke="#E2E8F0" stroke-width="1"/>
-<text x="1060.2" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Feb 2027</text>
+<line x1="463.9" y1="82" x2="463.9" y2="424" stroke="#E2E8F0" stroke-width="1"/>
+<text x="470.9" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Sep 2026</text>
+<line x1="700.0" y1="82" x2="700.0" y2="424" stroke="#E2E8F0" stroke-width="1"/>
+<text x="707.0" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Oct 2026</text>
+<line x1="943.9" y1="82" x2="943.9" y2="424" stroke="#E2E8F0" stroke-width="1"/>
+<text x="950.9" y="104" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">Nov 2026</text>
 <line x1="1180.0" y1="82" x2="1180.0" y2="424" stroke="#E2E8F0" stroke-width="1"/>
 <rect x="48" y="139" width="1132" height="52" fill="#FFFFFF" stroke="#E2E8F0"/>
 <text x="64" y="169" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Planning</text>
@@ -24,38 +18,33 @@
 <rect x="48" y="243" width="1132" height="52" fill="#FFFFFF" stroke="#E2E8F0"/>
 <text x="64" y="273" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Development</text>
 <rect x="48" y="295" width="1132" height="52" fill="#F1F5F9" stroke="#E2E8F0"/>
-<text x="64" y="325" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">UAT &amp; Deployment</text>
+<text x="64" y="325" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">UAT</text>
 <rect x="48" y="347" width="1132" height="52" fill="#FFFFFF" stroke="#E2E8F0"/>
-<text x="64" y="377" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Optional PGP</text>
-<rect x="220.0" y="148" width="95.1" height="31" rx="5" fill="#315A9E"/>
+<text x="64" y="377" font-family="Arial, sans-serif" font-size="13" font-weight="700" fill="#334155">Deployment</text>
+<rect x="220.0" y="148" width="165.2" height="31" rx="5" fill="#315A9E"/>
 <text x="229.0" y="168" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Planning</text>
-<rect x="251.7" y="200" width="140.4" height="31" rx="5" fill="#0F766E"/>
-<text x="260.7" y="220" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Resources Set up</text>
-<rect x="315.1" y="252" width="321.5" height="31" rx="5" fill="#7C3AED"/>
-<text x="324.1" y="272" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Development</text>
-<rect x="636.6" y="304" width="67.9" height="31" rx="5" fill="#DC2626"/>
-<text x="645.6" y="324" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">UAT &amp; Deployment</text>
-<rect x="700.0" y="356" width="416.6" height="31" rx="5" fill="#059669"/>
-<text x="709.0" y="376" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Optional PGP (3 months)</text>
+<rect x="275.1" y="200" width="243.9" height="31" rx="5" fill="#0F766E"/>
+<text x="284.1" y="220" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Resources Set up</text>
+<rect x="385.2" y="252" width="472.1" height="31" rx="5" fill="#7C3AED"/>
+<text x="394.2" y="272" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Development</text>
+<rect x="849.5" y="304" width="133.8" height="31" rx="5" fill="#D97706"/>
+<text x="858.5" y="324" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">UAT</text>
+<rect x="975.4" y="356" width="86.6" height="31" rx="5" fill="#DC2626"/>
+<text x="984.4" y="376" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#FFFFFF">Deploy</text>
 <line x1="220.0" y1="424" x2="220.0" y2="467" stroke="#315A9E" stroke-width="1.5"/>
 <circle cx="220.0" cy="424" r="4" fill="#315A9E"/>
 <text x="225.0" y="480" text-anchor="start" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#315A9E">SYC POC start</text>
-<line x1="310.6" y1="424" x2="310.6" y2="492" stroke="#315A9E" stroke-width="1.5"/>
-<circle cx="310.6" cy="424" r="4" fill="#315A9E"/>
-<text x="310.6" y="505" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#315A9E">Planning complete</text>
-<line x1="387.5" y1="424" x2="387.5" y2="467" stroke="#0F766E" stroke-width="1.5"/>
-<circle cx="387.5" cy="424" r="4" fill="#0F766E"/>
-<text x="387.5" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#0F766E">Resources Set up complete</text>
-<line x1="632.1" y1="424" x2="632.1" y2="492" stroke="#7C3AED" stroke-width="1.5"/>
-<circle cx="632.1" cy="424" r="4" fill="#7C3AED"/>
-<text x="632.1" y="505" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#7C3AED">Development complete</text>
-<line x1="700.0" y1="424" x2="700.0" y2="467" stroke="#DC2626" stroke-width="1.5"/>
-<circle cx="700.0" cy="424" r="4" fill="#DC2626"/>
-<text x="700.0" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#DC2626">Production completion</text>
-<line x1="1112.1" y1="424" x2="1112.1" y2="492" stroke="#059669" stroke-width="1.5"/>
-<circle cx="1112.1" cy="424" r="4" fill="#059669"/>
-<text x="1107.1" y="505" text-anchor="end" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#059669">Optional PGP ends</text>
-<line x1="700.0" y1="82" x2="700.0" y2="424" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>
-<text x="693.0" y="412" text-anchor="end" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#DC2626">Completion: 15 Nov 2026</text>
-<text x="48" y="638" font-family="Arial, sans-serif" font-size="12" fill="#475569">PGP is optional post-production support and stabilisation; it does not extend the production delivery completion date.</text>
+<line x1="377.4" y1="424" x2="377.4" y2="492" stroke="#315A9E" stroke-width="1.5"/>
+<circle cx="377.4" cy="424" r="4" fill="#315A9E"/>
+<text x="377.4" y="505" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#315A9E">Planning complete</text>
+<line x1="511.1" y1="424" x2="511.1" y2="467" stroke="#0F766E" stroke-width="1.5"/>
+<circle cx="511.1" cy="424" r="4" fill="#0F766E"/>
+<text x="511.1" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#0F766E">Resources Set up complete</text>
+<line x1="849.5" y1="424" x2="849.5" y2="492" stroke="#7C3AED" stroke-width="1.5"/>
+<circle cx="849.5" cy="424" r="4" fill="#7C3AED"/>
+<text x="849.5" y="505" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#7C3AED">Development complete</text>
+<line x1="1054.1" y1="424" x2="1054.1" y2="467" stroke="#DC2626" stroke-width="1.5"/>
+<circle cx="1054.1" cy="424" r="4" fill="#DC2626"/>
+<text x="1054.1" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#DC2626">Production completion</text>
+<line x1="1054.1" y1="82" x2="1054.1" y2="424" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 5"/>
 </svg>
